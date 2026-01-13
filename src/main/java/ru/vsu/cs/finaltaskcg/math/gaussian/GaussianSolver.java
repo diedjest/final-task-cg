@@ -2,20 +2,8 @@ package ru.vsu.cs.finaltaskcg.math.gaussian;
 
 import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 
-/**
- * Класс для решения систем линейных уравнений методом Гаусса.
- * Реализует метод исключения Гаусса с выбором главного элемента.
- */
 public class GaussianSolver {
 
-    /**
-     * Решает систему линейных уравнений методом Гаусса
-     * @param A матрица коэффициентов системы
-     * @param b вектор правых частей
-     * @return вектор решения системы
-     * @throws MathException если размеры матрицы и вектора не совпадают
-     * @throws MathException если система не имеет единственного решения
-     */
     public static double[] solve(double[][] A, double[] b) {
         int n = A.length;
 
