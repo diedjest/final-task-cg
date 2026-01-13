@@ -1,26 +1,19 @@
 package ru.vsu.cs.finaltaskcg.math.affine;
 
-import vsu.cs.transformations.Transformation;
+import ru.vsu.cs.finaltaskcg.math.affine.transformation.Transformation;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeTransformation implements Transformation {
     private final List<Transformation> transformations;
-    private Matrix4d cachedMatrix;
+    private Matrix4 cachedMatrix;
     private boolean isDirty;
-
 
     public CompositeTransformation() {
         this.transformations = new ArrayList<>();
-        this.cachedMatrix = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
+        this.cachedMatrix = Matrix4.identity();
         this.isDirty = false;
     }
 
@@ -30,27 +23,22 @@ public class CompositeTransformation implements Transformation {
     }
 
     private void updateCachedMatrix() {
-        Matrix4d result = new Matrix4d(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-        );
-
+        Matrix4 result = Matrix4.identity();
 
         for (Transformation transformation : transformations) {
-            Matrix4d temp = new Matrix4d();
-            temp.mul(transformation.getMatrix(), result);
-            result.set(temp);
+            // Умножаем матрицы: result = transformation.getMatrix() × result
+            result = transformation.getMatrix().mul(result);
         }
-        this.cachedMatrix.set(result);
+
+        this.cachedMatrix = result;
         this.isDirty = false;
     }
+
     @Override
-    public Matrix4d getMatrix() {
+    public Matrix4 getMatrix() {
         if (isDirty) {
             updateCachedMatrix();
         }
-        return new Matrix4d(cachedMatrix);
+        return cachedMatrix; // Возвращаем копию
     }
 }
