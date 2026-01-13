@@ -1,6 +1,7 @@
 package ru.vsu.cs.finaltaskcg.math.vector;
 
 import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
 /**
  * Класс для работы с двумерными векторами.
@@ -39,9 +40,7 @@ public class Vector2 {
      * Устанавливает новое значение координаты X
      * @param x - новое значение X
      */
-    public void setX(double x) {
-        this.x = x;
-    }
+    public void setX(double x) { this.x = x; }
 
     /**
      * Доступ к Y координате вектора
@@ -65,6 +64,7 @@ public class Vector2 {
      * @return результат сложения векторов
      */
     public Vector2 add(Vector2 v) {
+        MathValidator.checkNotNull(v, "Vector2 for addition");
         return new Vector2(x + v.x, y + v.y);
     }
 
@@ -74,6 +74,7 @@ public class Vector2 {
      * @return результат вычитания векторов
      */
     public Vector2 sub(Vector2 v) {
+        MathValidator.checkNotNull(v, "Vector2 for subtraction");
         return new Vector2(x - v.x, y - v.y);
     }
 
@@ -93,7 +94,7 @@ public class Vector2 {
      * @throws MathException если деление на 0
      */
     public Vector2 div(double s) {
-        if (s == 0) throw new MathException("Divide by zero");
+        MathValidator.checkNotZero(s, "Divisor");
         return new Vector2(x / s, y / s);
     }
 
@@ -112,7 +113,7 @@ public class Vector2 {
      */
     public Vector2 normalize() {
         double len = length();
-        if (len == 0) throw new MathException("Cannot normalize zero vector");
+        MathValidator.checkNotZero(len, "Vector length for normalization");
         return div(len);
     }
 
@@ -122,16 +123,8 @@ public class Vector2 {
      * @return число, результат скалярного произведения
      */
     public double dot(Vector2 v) {
+        MathValidator.checkNotNull(v, "Vector2 for dot product");
         return x * v.x + y * v.y;
-    }
-
-    /**
-     * Строковое представление вектора
-     * @return строка вида Vector2(x, y)
-     */
-    @Override
-    public String toString() {
-        return "Vector2(" + x + ", " + y + ")";
     }
 }
 
