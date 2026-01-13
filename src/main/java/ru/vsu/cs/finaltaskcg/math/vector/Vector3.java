@@ -1,6 +1,6 @@
 package ru.vsu.cs.finaltaskcg.math.vector;
 
-import ru.vsu.cs.uvarov_d_p.cg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 
 /**
  * Класс для работы с трехмерными векторами.
