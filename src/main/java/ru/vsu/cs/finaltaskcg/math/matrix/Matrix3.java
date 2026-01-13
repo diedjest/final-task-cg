@@ -2,14 +2,15 @@ package ru.vsu.cs.finaltaskcg.math.matrix;
 
 import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
 /**
  * Класс для работы с матрицами 3x3.
  * Предоставляет основные операции над матрицами размерности 3x3.
  */
 public class Matrix3 {
-
-    private final double[][] m = new double[3][3];
+    private final int SIZE = 3;
+    private final double[][] m = new double[SIZE][SIZE];
 
     /**
      * Конструктор по умолчанию.
@@ -25,10 +26,9 @@ public class Matrix3 {
      * @throws MathException если массив не размерности 3x3
      */
     public Matrix3(double[][] values) {
-        if (values.length != 3 || values[0].length != 3)
-            throw new MathException("Matrix3 requires 3x3 array");
+        MathValidator.checkArraySize(values, SIZE, SIZE);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < SIZE; i++)
             System.arraycopy(values[i], 0, m[i], 0, 3);
     }
 
@@ -40,9 +40,7 @@ public class Matrix3 {
      * @throws MathException если индексы выходят за границы
      */
     public double get(int row, int col) {
-        if (row < 0 || row >= 3 || col < 0 || col >= 3) {
-            throw new MathException("Matrix indices must be in range [0, 2]. Got [" + row + ", " + col + "]");
-        }
+        MathValidator.checkMatrixIndex(row, col, SIZE, SIZE);
         return m[row][col];
     }
 
@@ -54,9 +52,7 @@ public class Matrix3 {
      * @throws MathException если индексы выходят за границы
      */
     public void set(int row, int col, double value) {
-        if (row < 0 || row >= 3 || col < 0 || col >= 3) {
-            throw new MathException("Matrix indices must be in range [0, 2]. Got [" + row + ", " + col + "]");
-        }
+        MathValidator.checkMatrixIndex(row, col, SIZE, SIZE);
         m[row][col] = value;
     }
 
@@ -85,6 +81,7 @@ public class Matrix3 {
      * @return результат сложения матриц
      */
     public Matrix3 add(Matrix3 other) {
+        MathValidator.checkNotNull(other, "Matrix for addition");
         Matrix3 r = new Matrix3();
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
@@ -98,6 +95,7 @@ public class Matrix3 {
      * @return результат вычитания матриц
      */
     public Matrix3 sub(Matrix3 other) {
+        MathValidator.checkNotNull(other, "Matrix for subtraction");
         Matrix3 r = new Matrix3();
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
@@ -111,6 +109,7 @@ public class Matrix3 {
      * @return результат умножения матриц
      */
     public Matrix3 mul(Matrix3 other) {
+        MathValidator.checkNotNull(other, "Matrix for multiplication");
         Matrix3 r = new Matrix3();
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
@@ -125,6 +124,7 @@ public class Matrix3 {
      * @return результат умножения матрицы на вектор
      */
     public Vector3 mul(Vector3 v) {
+        MathValidator.checkNotNull(v, "Vector3");
         return new Vector3(
                 m[0][0]*v.getX() + m[0][1]*v.getY() + m[0][2]*v.getZ(),
                 m[1][0]*v.getX() + m[1][1]*v.getY() + m[1][2]*v.getZ(),
@@ -162,8 +162,7 @@ public class Matrix3 {
      */
     public Matrix3 inverse() {
         double det = determinant();
-        if (det == 0)
-            throw new MathException("Matrix3 is singular");
+        MathValidator.checkDeterminant(det);
 
         Matrix3 r = new Matrix3();
 
@@ -180,29 +179,5 @@ public class Matrix3 {
         r.m[2][2] =  (m[0][0] * m[1][1] - m[0][1] * m[1][0]) / det;
 
         return r;
-    }
-
-    /**
-     * Строковое представление матрицы
-     * @return матрица
-     */
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Matrix3:\n");
-        for (int i = 0; i < 3; i++) {
-            sb.append("[ ");
-            for (int j = 0; j < 3; j++) {
-                sb.append(m[i][j]);
-                if (j < 2) {
-                    sb.append(", ");
-                }
-            }
-            sb.append(" ]");
-            if (i < 2) {
-                sb.append("\n");
-            }
-        }
-        return sb.toString();
     }
 }
