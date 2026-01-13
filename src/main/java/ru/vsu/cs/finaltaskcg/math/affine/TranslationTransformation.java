@@ -1,7 +1,6 @@
 package ru.vsu.cs.finaltaskcg.math.affine;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
 public class TranslationTransformation implements Transformation {
     private final double tx, ty, tz;
@@ -13,12 +12,12 @@ public class TranslationTransformation implements Transformation {
     }
 
     @Override
-    public Matrix4d getMatrix() {
-        return new Matrix4d(
-                1, 0, 0, tx,
-                0, 1, 0, ty,
-                0, 0, 1, tz,
-                0, 0, 0, 1
-        );
+    public Matrix4 getMatrix() {
+        double[][] matrix4 = {
+                {1, 0, 0, tx},
+                {0, 1, 0, ty},
+                {0, 0, 1, tz},
+                {0, 0, 0, 1}};
+        return new Matrix4(matrix4);
     }
 }
