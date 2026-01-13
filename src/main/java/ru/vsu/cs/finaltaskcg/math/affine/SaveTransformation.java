@@ -1,17 +1,17 @@
 package ru.vsu.cs.finaltaskcg.math.affine;
 
-import javax.vecmath.Matrix4d;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
+public class SaveTransformation implements Transformation {
+    private final Matrix4 saveCondition;
 
-public class SaveTransformation implements Transformation{
-    private final Matrix4d saveCondition;
-
-    public SaveTransformation(Matrix4d matrix) {
-        this.saveCondition = (Matrix4d) matrix.clone();
+    public SaveTransformation(Matrix4 matrix) {
+        this.saveCondition = new Matrix4(matrix); // Используем конструктор копирования
     }
 
     @Override
-    public Matrix4d getMatrix() {
-        return (Matrix4d) this.saveCondition.clone();
+    public Matrix4 getMatrix() {
+        // Возвращаем копию, чтобы нельзя было изменить сохраненное состояние
+        return new Matrix4(saveCondition);
     }
 }
