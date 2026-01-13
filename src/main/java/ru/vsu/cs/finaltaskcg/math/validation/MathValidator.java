@@ -2,8 +2,9 @@ package ru.vsu.cs.finaltaskcg.math.validation;
 
 import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 
+import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
+
 public final class MathValidator {
-    private static final double EPSILON = 1e-10;
 
     private MathValidator() {}
 
