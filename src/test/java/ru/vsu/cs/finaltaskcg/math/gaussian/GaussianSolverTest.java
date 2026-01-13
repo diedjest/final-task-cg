@@ -1,7 +1,7 @@
 package ru.vsu.cs.finaltaskcg.math.gaussian;
 
 import org.junit.jupiter.api.Test;
-import ru.vsu.cs.uvarov_d_p.cg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

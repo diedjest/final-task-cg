@@ -1,8 +1,8 @@
 package ru.vsu.cs.finaltaskcg.math.matrix;
 
 import org.junit.jupiter.api.Test;
-import ru.vsu.cs.uvarov_d_p.cg.math.exceptions.MathException;
-import ru.vsu.cs.uvarov_d_p.cg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
