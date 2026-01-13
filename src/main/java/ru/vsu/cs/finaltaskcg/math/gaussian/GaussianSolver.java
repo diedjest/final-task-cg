@@ -1,13 +1,19 @@
 package ru.vsu.cs.finaltaskcg.math.gaussian;
 
 import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
+
+import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
 
 public class GaussianSolver {
 
     public static double[] solve(double[][] A, double[] b) {
+        MathValidator.checkNotNull(A, "Matrix A");
+        MathValidator.checkNotNull(b, "Vector b");
+
         int n = A.length;
 
-        if (A.length != b.length)
+        if (n != b.length)
             throw new MathException("Matrix and vector sizes do not match");
 
         double[][] M = new double[n][n + 1];
@@ -26,7 +32,7 @@ public class GaussianSolver {
             M[i] = M[maxRow];
             M[maxRow] = tmp;
 
-            if (M[i][i] == 0)
+            if (Math.abs(M[i][i]) < EPSILON)
                 throw new MathException("System has no unique solution");
 
             double diag = M[i][i];
