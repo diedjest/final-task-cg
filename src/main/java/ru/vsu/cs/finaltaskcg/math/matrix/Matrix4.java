@@ -19,6 +19,14 @@ public class Matrix4 {
             System.arraycopy(values[i], 0, m[i], 0, 4);
     }
 
+    public Matrix4(Matrix4 other) {
+        MathValidator.checkNotNull(other, "Matrix4 for copy");
+
+        for (int i = 0; i < SIZE; i++) {
+            System.arraycopy(other.m[i], 0, this.m[i], 0, SIZE);
+        }
+    }
+
     public double get(int row, int col) {
         MathValidator.checkMatrixIndex(row, col, SIZE, SIZE);
         return m[row][col];
