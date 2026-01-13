@@ -1,8 +1,8 @@
 package ru.vsu.cs.finaltaskcg.math.affine;
 
-import vsu.cs.transformations.Axis;
-import vsu.cs.transformations.SaveTransformation;
-import vsu.cs.transformations.Transformation;
+import ru.vsu.cs.finaltaskcg.math.affine.transformation.Axis;
+import ru.vsu.cs.finaltaskcg.math.affine.transformation.SaveTransformation;
+import ru.vsu.cs.finaltaskcg.math.affine.transformation.Transformation;
 
 public interface AffineBuilderInterface {
     Transformation build();
