@@ -1,6 +1,5 @@
 package ru.vsu.cs.finaltaskcg.math.matrix;
 
-import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
