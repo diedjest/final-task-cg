@@ -10,18 +10,19 @@ public class RotateTransformation implements Transformation {
     }
 
     private Matrix4 createRotationMatrix(Axis axis, double angle) {
-        double[][] xRotationMatrix = new double[][] {
+        double[][] xRotationMatrix = {
                 {1, 0, 0, 0},
                 {0, Math.cos(angle), Math.sin(angle), 0},
                 {0, -Math.sin(angle), Math.cos(angle), 0},
-                {0, 0, 0, 1}};
-        double[][] yRotationMatrix = new double[][] {
+                {0, 0, 0, 1}
+        };
+        double[][] yRotationMatrix = {
                 {Math.cos(angle), 0, Math.sin(angle), 0},
                 {0, 1, 0, 0},
                 {-Math.sin(angle), 0, Math.cos(angle), 0},
                 {0, 0, 0, 1}
         };
-        double[][] zRotationMatrix = new double[][] {
+        double[][] zRotationMatrix = {
                 {Math.cos(angle), Math.sin(angle), 0, 0},
                 {-Math.sin(angle), Math.cos(angle), 0, 0},
                 {0, 0, 1, 0},
