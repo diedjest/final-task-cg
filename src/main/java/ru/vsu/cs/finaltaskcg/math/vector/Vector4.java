@@ -1,6 +1,6 @@
 package ru.vsu.cs.finaltaskcg.math.vector;
 
-import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
+import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
 public class Vector4 {
     private double x, y, z, w;
@@ -44,10 +44,12 @@ public class Vector4 {
     }
 
     public Vector4 add(Vector4 v) {
+        MathValidator.checkNotNull(v, "Vector4 for addition");
         return new Vector4(x + v.x, y + v.y, z + v.z, w + v.w);
     }
 
     public Vector4 sub(Vector4 v) {
+        MathValidator.checkNotNull(v, "Vector4 for subtraction");
         return new Vector4(x - v.x, y - v.y, z - v.z, w - v.w);
     }
 
@@ -56,7 +58,7 @@ public class Vector4 {
     }
 
     public Vector4 div(double s) {
-        if (s == 0) throw new MathException("Divide by zero");
+        MathValidator.checkNotZero(s, "Divisor");
         return new Vector4(x / s, y / s, z / s, w / s);
     }
 
@@ -66,11 +68,12 @@ public class Vector4 {
 
     public Vector4 normalize() {
         double len = length();
-        if (len == 0) throw new MathException("Cannot normalize zero vector");
+        MathValidator.checkNotZero(len, "Vector length for normalization");
         return div(len);
     }
 
     public double dot(Vector4 v) {
+        MathValidator.checkNotNull(v, "Vector4 for dot product");
         return x*v.x + y*v.y + z*v.z + w*v.w;
     }
 }
