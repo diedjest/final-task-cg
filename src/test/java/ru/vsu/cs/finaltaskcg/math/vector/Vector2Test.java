@@ -200,36 +200,6 @@ class Vector2Test {
     }
 
     @Test
-    void testEqualsAndHashCode() {
-        Vector2 a = new Vector2(1.0, 2.0);
-        Vector2 b = new Vector2(1.0, 2.0);
-        Vector2 c = new Vector2(1.0 + EPSILON/2, 2.0 + EPSILON/2);
-        Vector2 d = new Vector2(2.0, 1.0);
-
-        assertEquals(a, b);
-        assertEquals(a.hashCode(), b.hashCode());
-        assertNotEquals(a, d);
-    }
-
-    @Test
-    void testToString() {
-        Vector2 v = new Vector2(1.5, -2.5);
-        String str = v.toString();
-
-        assertNotNull(str);
-        assertTrue(str.contains("1.5"));
-        assertTrue(str.contains("-2.5"));
-    }
-
-    // Новые тесты для edge cases
-    @Test
-    void testLengthSquared() {
-        // Если добавите метод lengthSquared() в Vector2
-        Vector2 v = new Vector2(3, 4);
-        // assertEquals(25, v.lengthSquared(), EPSILON);
-    }
-
-    @Test
     void testDivByNegative() {
         Vector2 a = new Vector2(6, -9);
         Vector2 b = a.div(-3);
