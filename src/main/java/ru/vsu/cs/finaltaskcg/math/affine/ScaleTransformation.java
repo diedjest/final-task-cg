@@ -1,7 +1,6 @@
 package ru.vsu.cs.finaltaskcg.math.affine;
 
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
 public class ScaleTransformation implements Transformation {
     private final double sx, sy, sz;
@@ -16,13 +15,13 @@ public class ScaleTransformation implements Transformation {
         this(uniformScale, uniformScale, uniformScale);
     }
 
-    @Override
-    public Matrix4d getMatrix() {
-        return new Matrix4d(
-            sx, 0, 0, 0,
-            0, sy, 0, 0,
-            0, 0, sz, 0,
-            0, 0, 0, 1
-        );
+    public Matrix4 getMatrix() {
+        double[][] matrix4 = {
+                {sx, 0, 0, 0},
+                {0, sy, 0, 0},
+                {0, 0, sz, 0},
+                {0, 0, 0, 1}
+        };
+        return new Matrix4(matrix4);
     }
 }
