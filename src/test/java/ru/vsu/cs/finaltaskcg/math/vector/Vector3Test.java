@@ -142,7 +142,7 @@ class Vector3Test {
     void testDivByEpsilonDoesNotThrow() {
         Vector3 a = new Vector3(1, 2, 3);
 
-        // Деление на число больше EPSILON должно работать
+        // Деление на число больше EPSILON
         Vector3 result = a.div(1e-5);
         assertNotNull(result);
         assertEquals(1e5, result.getX(), 100); // Допустима большая погрешность
@@ -274,7 +274,7 @@ class Vector3Test {
         Vector3 crossAB = a.cross(b);
         Vector3 crossBA = b.cross(a);
 
-        // a × b = -(b × a)
+        // a * b = -(b * a)
         assertEquals(-crossAB.getX(), crossBA.getX(), EPSILON);
         assertEquals(-crossAB.getY(), crossBA.getY(), EPSILON);
         assertEquals(-crossAB.getZ(), crossBA.getZ(), EPSILON);
@@ -311,7 +311,7 @@ class Vector3Test {
 
     @Test
     void testCrossDotIdentity() {
-        // Тождество Лагранжа: (a × b) · c = a · (b × c)
+        // Тождество Лагранжа: (a * b) . c = a . (b * c)
         Vector3 a = new Vector3(1, 2, 3);
         Vector3 b = new Vector3(4, 5, 6);
         Vector3 c = new Vector3(7, 8, 9);

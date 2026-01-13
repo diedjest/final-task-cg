@@ -475,7 +475,7 @@ class Matrix3Test {
 
     @Test
     void testTransposeInverseProperty() {
-        // Для невырожденной матрицы: (A⁻¹)ᵀ = (Aᵀ)⁻¹
+        // Для невырожденной матрицы: (A^-1)^T = (A^T)^-1
         Matrix3 A = new Matrix3(new double[][]{
                 {1, 2, 3},
                 {0, 4, 5},
@@ -506,7 +506,7 @@ class Matrix3Test {
 
         // Масштабирование строки 0 на 2
         Matrix3 scaled = new Matrix3(new double[][]{
-                {2, 4, 6},  // Строка 0 × 2
+                {2, 4, 6},  // Строка 0 * 2
                 {4, 5, 6},
                 {7, 8, 9}
         });

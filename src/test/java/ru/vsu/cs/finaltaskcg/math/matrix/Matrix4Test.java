@@ -58,7 +58,6 @@ class Matrix4Test {
 
         assertThrows(MathException.class, () -> new Matrix4(nullArray));
         assertThrows(MathException.class, () -> new Matrix4(nullRow));
-        // Для null элемента внутри строки нужно проверить, обрабатывает ли MathValidator
     }
 
     @Test
@@ -537,7 +536,7 @@ class Matrix4Test {
 
     @Test
     void testTransposeInverseProperty() {
-        // Для невырожденной матрицы: (A⁻¹)ᵀ = (Aᵀ)⁻¹
+        // Для невырожденной матрицы: (A^-1)^T = (A^T)^-1
         Matrix4 A = new Matrix4(new double[][]{
                 {1, 0, 0, 0},
                 {0, 2, 0, 0},
@@ -570,7 +569,7 @@ class Matrix4Test {
 
         // Масштабирование строки 0 на 2
         Matrix4 scaled = new Matrix4(new double[][]{
-                {2, 4, 6, 8},  // Строка 0 × 2
+                {2, 4, 6, 8},  // Строка 0 * 2
                 {5, 6, 7, 8},
                 {9, 10, 11, 12},
                 {13, 14, 15, 16}
@@ -631,7 +630,7 @@ class Matrix4Test {
                 {1, 1, 2, 1}
         });
 
-        // (AB)⁻¹ = B⁻¹A⁻¹
+        // (AB)^-1 = B^-1 * A^-1
         Matrix4 AB = A.mul(B);
         Matrix4 AB_inv = AB.inverse();
         Matrix4 B_inv_A_inv = B.inverse().mul(A.inverse());
@@ -659,7 +658,7 @@ class Matrix4Test {
                 {4, 3, 2, 1}
         });
 
-        // (AB)ᵀ = BᵀAᵀ
+        // (AB)^T = B^T * A^T
         Matrix4 AB = A.mul(B);
         Matrix4 AB_transpose = AB.transpose();
         Matrix4 B_transpose_A_transpose = B.transpose().mul(A.transpose());

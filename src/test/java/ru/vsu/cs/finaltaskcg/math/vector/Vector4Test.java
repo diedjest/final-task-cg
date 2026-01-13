@@ -157,7 +157,7 @@ class Vector4Test {
     void testDivByEpsilonDoesNotThrow() {
         Vector4 v = new Vector4(1, 2, 3, 4);
 
-        // Деление на число больше EPSILON должно работать
+        // Деление на число больше EPSILON
         Vector4 result = v.div(1e-5);
         assertNotNull(result);
         assertEquals(1e5, result.getX(), 100); // Допустима большая погрешность

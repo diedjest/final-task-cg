@@ -112,7 +112,7 @@ class Vector2Test {
     void testDivByZeroThrows() {
         Vector2 a = new Vector2(1, 1);
 
-        // Теперь проверка сработает на очень маленькое число
+        // Проверка сработает на очень маленькое число
         assertThrows(MathException.class, () -> a.div(0));
         assertThrows(MathException.class, () -> a.div(1e-20)); // Очень маленькое число
         assertThrows(MathException.class, () -> a.div(-1e-20));
@@ -122,7 +122,7 @@ class Vector2Test {
     void testDivByEpsilonDoesNotThrow() {
         Vector2 a = new Vector2(1, 1);
 
-        // Деление на число больше EPSILON должно работать
+        // Деление на число больше EPSILON
         Vector2 result = a.div(1e-5);
         assertNotNull(result);
         assertEquals(1e5, result.getX(), 1); // Допустима большая погрешность
