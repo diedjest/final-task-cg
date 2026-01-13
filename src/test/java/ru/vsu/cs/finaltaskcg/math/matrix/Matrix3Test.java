@@ -5,9 +5,9 @@ import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
 
 class Matrix3Test {
-    private static final double EPSILON = 1e-10;
 
     @Test
     void testDefaultConstructor() {
