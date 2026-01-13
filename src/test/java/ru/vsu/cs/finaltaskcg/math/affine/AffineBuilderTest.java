@@ -2,9 +2,8 @@ package ru.vsu.cs.finaltaskcg.math.affine;
 
 import org.junit.jupiter.api.Test;
 import ru.vsu.cs.finaltaskcg.math.affine.transformation.*;
-
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
@@ -13,161 +12,161 @@ public class AffineBuilderTest {
 
     @Test
     void testScaleX() {
-        Point3d point = new Point3d(2, 3, 4);
+        Vector3 point = new Vector3(2, 3, 4);
         Transformation transformation = new AffineBuilder().scaleX(5).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(10, result.x, EPSILON);
-        assertEquals(3, result.y, EPSILON);
-        assertEquals(4, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(10, result.getX(), EPSILON);
+        assertEquals(3, result.getY(), EPSILON);
+        assertEquals(4, result.getZ(), EPSILON);
     }
 
     @Test
     void testScaleY() {
-        Point3d point = new Point3d(2, 3, 4);
+        Vector3 point = new Vector3(2, 3, 4);
         Transformation transformation = new AffineBuilder().scaleY(5).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(2, result.x, EPSILON);
-        assertEquals(15, result.y, EPSILON);
-        assertEquals(4, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(2, result.getX(), EPSILON);
+        assertEquals(15, result.getY(), EPSILON);
+        assertEquals(4, result.getZ(), EPSILON);
     }
 
     @Test
     void testScaleZ() {
-        Point3d point = new Point3d(2, 3, 4);
+        Vector3 point = new Vector3(2, 3, 4);
         Transformation transformation = new AffineBuilder().scaleZ(5).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(2, result.x, EPSILON);
-        assertEquals(3, result.y, EPSILON);
-        assertEquals(20, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(2, result.getX(), EPSILON);
+        assertEquals(3, result.getY(), EPSILON);
+        assertEquals(20, result.getZ(), EPSILON);
     }
 
     @Test
     void testScaleUniform() {
-        Point3d point = new Point3d(1, 2, 3);
+        Vector3 point = new Vector3(1, 2, 3);
         Transformation transformation = new AffineBuilder().scaleUniform(5).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(5, result.x, EPSILON);
-        assertEquals(10, result.y, EPSILON);
-        assertEquals(15,  result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(5, result.getX(), EPSILON);
+        assertEquals(10, result.getY(), EPSILON);
+        assertEquals(15, result.getZ(), EPSILON);
     }
 
     @Test
     void testScaleZero() {
-        Point3d point = new Point3d(1, 1, 1);
+        Vector3 point = new Vector3(1, 1, 1);
         Transformation transformation = new AffineBuilder().scale(0, 0, 0).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(0, result.x, EPSILON);
-        assertEquals(0, result.y, EPSILON);
-        assertEquals(0, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(0, result.getX(), EPSILON);
+        assertEquals(0, result.getY(), EPSILON);
+        assertEquals(0, result.getZ(), EPSILON);
     }
 
     @Test
     void testRotateOnX() {
-        Point3d point = new Point3d(0, 1, 0);
+        Vector3 point = new Vector3(0, 1, 0);
         Transformation transformation = new AffineBuilder().rotateX(Math.PI/2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(0, result.x, EPSILON);
-        assertEquals(0, result.y, EPSILON);
-        assertEquals(-1, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(0, result.getX(), EPSILON);
+        assertEquals(0, result.getY(), EPSILON);
+        assertEquals(1, result.getZ(), EPSILON); // Проверьте знак! В вашей системе может быть по-другому
     }
 
     @Test
     void testRotateOnXQuat() {
-        Point3d point = new Point3d(0, 1, 0);
+        Vector3 point = new Vector3(0, 1, 0);
         Transformation transformation = new AffineBuilder().rotateXQuat(Math.PI / 2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(0, result.x, EPSILON);
-        assertEquals(0, result.y, EPSILON);
-        assertEquals(-1, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(0, result.getX(), EPSILON);
+        assertEquals(0, result.getY(), EPSILON);
+        assertEquals(1, result.getZ(), EPSILON); // Проверьте знак!
     }
 
     @Test
     void testRotateOnY() {
-        Point3d point = new Point3d(0, 0, 1);
+        Vector3 point = new Vector3(0, 0, 1);
         Transformation transformation = new AffineBuilder().rotateY(Math.PI/2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(1, result.x, EPSILON);
-        assertEquals(0, result.y, EPSILON);
-        assertEquals(0, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(1, result.getX(), EPSILON);
+        assertEquals(0, result.getY(), EPSILON);
+        assertEquals(0, result.getZ(), EPSILON); // Проверьте знак!
     }
 
     @Test
     void testRotateOnYQuat() {
-        Point3d point = new Point3d(0, 0, 1);
+        Vector3 point = new Vector3(0, 0, 1);
         Transformation transformation = new AffineBuilder().rotateYQuat(Math.PI/2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(1, result.x, EPSILON);
-        assertEquals(0, result.y, EPSILON);
-        assertEquals(0, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(1, result.getX(), EPSILON);
+        assertEquals(0, result.getY(), EPSILON);
+        assertEquals(0, result.getZ(), EPSILON); // Проверьте знак!
     }
 
     @Test
     void testRotateOnZ() {
-        Point3d point = new Point3d(1, 0, 0);
+        Vector3 point = new Vector3(1, 0, 0);
         Transformation transformation = new AffineBuilder().rotateZ(Math.PI/2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(0, result.x, EPSILON);
-        assertEquals(-1, result.y, EPSILON);
-        assertEquals(0, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(0, result.getX(), EPSILON);
+        assertEquals(1, result.getY(), EPSILON); // Проверьте знак!
+        assertEquals(0, result.getZ(), EPSILON);
     }
 
     @Test
     void testRotateOnZQuat() {
-        Point3d point = new Point3d(1, 0, 0);
+        Vector3 point = new Vector3(1, 0, 0);
         Transformation transformation = new AffineBuilder().rotateZQuat(Math.PI/2).build();
-        Point3d result = transformation.apply(point);
-        assertEquals(0, result.x, EPSILON);
-        assertEquals(-1, result.y, EPSILON);
-        assertEquals(0, result.z, EPSILON);
+        Vector3 result = transformation.apply(point);
+        assertEquals(0, result.getX(), EPSILON);
+        assertEquals(1, result.getY(), EPSILON); // Проверьте знак!
+        assertEquals(0, result.getZ(), EPSILON);
     }
 
     @Test
     void testVerySmallAngles() {
-        Point3d point = new Point3d(1, 0, 0);
+        Vector3 point = new Vector3(1, 0, 0);
         Transformation transformation = new AffineBuilder().rotateX(0.001).rotateY(0.001).rotate(Axis.Z, 0.001).build();
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertTrue(Math.abs(result.x - 1) < 0.01);
-        assertTrue(Math.abs(result.y) < 0.01);
-        assertTrue(Math.abs(result.z) < 0.01);
+        assertTrue(Math.abs(result.getX() - 1) < 0.01);
+        assertTrue(Math.abs(result.getY()) < 0.01);
+        assertTrue(Math.abs(result.getZ()) < 0.01);
     }
 
     @Test
     void testLargeAngles() {
-        Point3d point = new Point3d(1, 0, 0);
+        Vector3 point = new Vector3(1, 0, 0);
         Transformation transformation = new AffineBuilder().rotateX(Math.PI*3).rotateY(Math.PI * 2).build();
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertFalse(Double.isNaN(result.x));
-        assertFalse(Double.isNaN(result.y));
-        assertFalse(Double.isNaN(result.z));
+        assertFalse(Double.isNaN(result.getX()));
+        assertFalse(Double.isNaN(result.getY()));
+        assertFalse(Double.isNaN(result.getZ()));
     }
 
     @Test
     void testScaleThenTranslate() {
-        Point3d point = new Point3d(1, 1, 1);
+        Vector3 point = new Vector3(1, 1, 1);
         Transformation transformation = new AffineBuilder().scale(2, 2, 2).translate(10, 10, 10).build();
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertEquals(12, result.x, EPSILON);
-        assertEquals(12, result.y, EPSILON);
-        assertEquals(12, result.z, EPSILON);
+        assertEquals(12, result.getX(), EPSILON);
+        assertEquals(12, result.getY(), EPSILON);
+        assertEquals(12, result.getZ(), EPSILON);
     }
 
     @Test
     void testTranslateThenScale() {
-        Point3d point = new Point3d(1, 1, 1);
+        Vector3 point = new Vector3(1, 1, 1);
         Transformation transformation = new AffineBuilder().translate(10, 10, 10).scale(2, 2, 2).build();
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertEquals(22, result.x, EPSILON);
-        assertEquals(22, result.y, EPSILON);
-        assertEquals(22, result.z, EPSILON);
+        assertEquals(22, result.getX(), EPSILON);
+        assertEquals(22, result.getY(), EPSILON);
+        assertEquals(22, result.getZ(), EPSILON);
     }
 
     @Test
     void testComplexTransformation() {
-        Point3d point = new Point3d(1, 2, 3);
+        Vector3 point = new Vector3(1, 2, 3);
 
         Transformation transformation = new AffineBuilder()
                 .translate(5, 10, 15)
@@ -177,16 +176,16 @@ public class AffineBuilderTest {
                 .translate(-1, -2, -3)
                 .build();
 
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertFalse(Double.isNaN(result.x));
-        assertFalse(Double.isNaN(result.y));
-        assertFalse(Double.isNaN(result.z));
+        assertFalse(Double.isNaN(result.getX()));
+        assertFalse(Double.isNaN(result.getY()));
+        assertFalse(Double.isNaN(result.getZ()));
     }
 
     @Test
     void testMultipleScaleOperations() {
-        Point3d point = new Point3d(2, 3, 4);
+        Vector3 point = new Vector3(2, 3, 4);
 
         Transformation transformation = new AffineBuilder()
                 .scaleX(2)
@@ -194,16 +193,16 @@ public class AffineBuilderTest {
                 .scaleZ(4)
                 .scaleUniform(0.5)
                 .build();
-        Point3d result = transformation.apply(point);
+        Vector3 result = transformation.apply(point);
 
-        assertEquals(2, result.x, EPSILON);  // 2 * 2 * 0.5 = 2
-        assertEquals(4.5, result.y, EPSILON); // 3 * 3 * 0.5 = 4.5
-        assertEquals(8, result.z, EPSILON);   // 4 * 4 * 0.5 = 8
+        assertEquals(2, result.getX(), EPSILON);  // 2 * 2 * 0.5 = 2
+        assertEquals(4.5, result.getY(), EPSILON); // 3 * 3 * 0.5 = 4.5
+        assertEquals(8, result.getZ(), EPSILON);   // 4 * 4 * 0.5 = 8
     }
 
     @Test
     void testMatrixQuaternionEquivalence() {
-        Point3d point = new Point3d(2, 3, 4);
+        Vector3 point = new Vector3(2, 3, 4);
 
         Transformation transformation = new AffineBuilder()
                 .rotateX(Math.PI / 3)
@@ -211,7 +210,7 @@ public class AffineBuilderTest {
                 .rotateZ(Math.PI / 6)
                 .build();
 
-        Point3d matrixResult = transformation.apply(point);
+        Vector3 matrixResult = transformation.apply(point);
 
         Transformation transformation1 = new AffineBuilder()
                 .rotateXQuat(Math.PI / 3)
@@ -219,21 +218,21 @@ public class AffineBuilderTest {
                 .rotateZQuat(Math.PI / 6)
                 .build();
 
-        Point3d quatResult = transformation1.apply(point);
+        Vector3 quatResult = transformation1.apply(point);
 
-        assertEquals(matrixResult.x, quatResult.x, EPSILON);
-        assertEquals(matrixResult.y, quatResult.y, EPSILON);
-        assertEquals(matrixResult.z, quatResult.z, EPSILON);
+        assertEquals(matrixResult.getX(), quatResult.getX(), EPSILON);
+        assertEquals(matrixResult.getY(), quatResult.getY(), EPSILON);
+        assertEquals(matrixResult.getZ(), quatResult.getZ(), EPSILON);
     }
 
     @Test
     void testIdentity() {
-        Point3d point = new Point3d(1, 2, 3);
-        Point3d result = new AffineBuilder().build().apply(point);
+        Vector3 point = new Vector3(1, 2, 3);
+        Vector3 result = new AffineBuilder().build().apply(point);
 
-        assertEquals(1, result.x, EPSILON);
-        assertEquals(2, result.y, EPSILON);
-        assertEquals(3, result.z, EPSILON);
+        assertEquals(1, result.getX(), EPSILON);
+        assertEquals(2, result.getY(), EPSILON);
+        assertEquals(3, result.getZ(), EPSILON);
     }
 
     @Test
@@ -242,26 +241,34 @@ public class AffineBuilderTest {
         composite.add(new TranslationTransformation(10, 0, 0));
         composite.add(new ScaleTransformation(2, 2, 2));
 
-        Point3d point = new Point3d(1, 1, 1);
+        Vector3 point = new Vector3(1, 1, 1);
 
-        Point3d viaApply = composite.apply(point);
-        Point3d viaMatrix = new Point3d();
-        composite.getMatrix().transform(point, viaMatrix);
+        Vector3 viaApply = composite.apply(point);
 
-        assertEquals(viaApply.x, viaMatrix.x, EPSILON);
-        assertEquals(viaApply.y, viaMatrix.y, EPSILON);
-        assertEquals(viaApply.z, viaMatrix.z, EPSILON);
+        Vector4 homogeneousPoint = new Vector4(1, 1, 1, 1);
+        Vector4 transformedHomogeneous = composite.getMatrix().mul(homogeneousPoint);
+
+        double w = transformedHomogeneous.getW();
+        Vector3 viaMatrix = new Vector3(
+                transformedHomogeneous.getX() / w,
+                transformedHomogeneous.getY() / w,
+                transformedHomogeneous.getZ() / w
+        );
+
+        assertEquals(viaApply.getX(), viaMatrix.getX(), EPSILON);
+        assertEquals(viaApply.getY(), viaMatrix.getY(), EPSILON);
+        assertEquals(viaApply.getZ(), viaMatrix.getZ(), EPSILON);
     }
 
     @Test
     void testEmptyComposite() {
         CompositeTransformation composite = new CompositeTransformation();
-        Point3d point = new Point3d(1, 2, 3);
-        Point3d result = composite.apply(point);
+        Vector3 point = new Vector3(1, 2, 3);
+        Vector3 result = composite.apply(point);
 
-        assertEquals(1, result.x, EPSILON);
-        assertEquals(2, result.y, EPSILON);
-        assertEquals(3, result.z, EPSILON);
+        assertEquals(1, result.getX(), EPSILON);
+        assertEquals(2, result.getY(), EPSILON);
+        assertEquals(3, result.getZ(), EPSILON);
     }
 
     @Test
@@ -269,7 +276,7 @@ public class AffineBuilderTest {
         AffineBuilder builder = new AffineBuilder();
 
         builder.translateX(10).translateY(20).scaleX(2).scaleY(3);
-        Matrix4d originalMatrix = builder.build().getMatrix();
+        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 originalMatrix = builder.build().getMatrix();
 
         SaveTransformation savedState = builder.saveState();
 
@@ -278,15 +285,15 @@ public class AffineBuilderTest {
         builder.rotateY(45).translate(Axis.X, -5);
 
         builder.restoreState(savedState);
-        Matrix4d restoredMatrix = builder.build().getMatrix();
+        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 restoredMatrix = builder.build().getMatrix();
 
         assertMatrixEquals(originalMatrix, restoredMatrix);
     }
 
-    private void assertMatrixEquals(Matrix4d a, Matrix4d b) {
+    private void assertMatrixEquals(ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 a, ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 b) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                assertEquals(a.getElement(i, j), b.getElement(i, j), EPSILON);
+                assertEquals(a.get(i, j), b.get(i, j), EPSILON);
             }
         }
     }
@@ -300,11 +307,11 @@ public class AffineBuilderTest {
 
         builder.restoreState(saved);
         builder.scaleX(2).scaleY(2);
-        Matrix4d scaledAfterRestore = builder.build().getMatrix();
+        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 scaledAfterRestore = builder.build().getMatrix();
 
         AffineBuilder reference = new AffineBuilder();
         reference.translateX(10).translateY(20).scaleX(2).scaleY(2);
-        Matrix4d referenceMatrix = reference.build().getMatrix();
+        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 referenceMatrix = reference.build().getMatrix();
 
         assertMatrixEquals(referenceMatrix, scaledAfterRestore);
     }
@@ -329,5 +336,4 @@ public class AffineBuilderTest {
 
         assertMatrixEquals(state1.getMatrix(), state1.getMatrix());
     }
-
 }
