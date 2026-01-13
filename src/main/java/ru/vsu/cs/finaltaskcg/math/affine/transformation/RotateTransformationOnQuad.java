@@ -1,4 +1,4 @@
-package ru.vsu.cs.finaltaskcg.math.affine;
+package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
