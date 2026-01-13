@@ -13,11 +13,10 @@ public class TranslationTransformation implements Transformation {
 
     @Override
     public Matrix4 getMatrix() {
-        double[][] matrix4 = {
-                {1, 0, 0, tx},
-                {0, 1, 0, ty},
-                {0, 0, 1, tz},
-                {0, 0, 0, 1}};
-        return new Matrix4(matrix4);
+        Matrix4 matrix = Matrix4.identity();
+        matrix.set(0, 3, tx);
+        matrix.set(1, 3, ty);
+        matrix.set(2, 3, tz);
+        return matrix;
     }
 }
