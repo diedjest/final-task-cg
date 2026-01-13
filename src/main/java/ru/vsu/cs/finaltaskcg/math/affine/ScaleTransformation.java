@@ -15,13 +15,12 @@ public class ScaleTransformation implements Transformation {
         this(uniformScale, uniformScale, uniformScale);
     }
 
+    @Override
     public Matrix4 getMatrix() {
-        double[][] matrix4 = {
-                {sx, 0, 0, 0},
-                {0, sy, 0, 0},
-                {0, 0, sz, 0},
-                {0, 0, 0, 1}
-        };
-        return new Matrix4(matrix4);
+        Matrix4 matrix = Matrix4.identity();
+        matrix.set(0, 0, sx);
+        matrix.set(1, 1, sy);
+        matrix.set(2, 2, sz);
+        return matrix;
     }
 }
