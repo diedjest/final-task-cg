@@ -1,13 +1,13 @@
 package ru.vsu.cs.finaltaskcg.render_engine;
 
-import com.cgvsu.math.Matrix4f;
-import com.cgvsu.math.Vector3f;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 public class Camera {
 
     public Camera(
-            final Vector3f position,
-            final Vector3f target,
+            final Vector3 position,
+            final Vector3 target,
             final float fov,
             final float aspectRatio,
             final float nearPlane,
@@ -20,11 +20,11 @@ public class Camera {
         this.farPlane = farPlane;
     }
 
-    public void setPosition(final Vector3f position) {
+    public void setPosition(final Vector3 position) {
         this.position = position;
     }
 
-    public void setTarget(final Vector3f target) {
+    public void setTarget(final Vector3 target) {
         this.target = target;
     }
 
@@ -32,36 +32,32 @@ public class Camera {
         this.aspectRatio = aspectRatio;
     }
 
-    public Vector3f getPosition() {
+    public Vector3 getPosition() {
         return position;
     }
 
-    public Vector3f getTarget() {
+    public Vector3 getTarget() {
         return target;
     }
 
-    public void movePosition(final Vector3f translation) {
-        this.position.x += translation.x;
-        this.position.y += translation.y;
-        this.position.z += translation.z;
+    public void movePosition(final Vector3 translation) {
+        this.position = this.position.add(translation);
     }
 
-    public void moveTarget(final Vector3f translation) {
-        this.target.x += translation.x;
-        this.target.y += translation.y;
-        this.target.z += translation.z;
+    public void moveTarget(final Vector3 translation) {
+        this.target = this.target.add(translation);
     }
 
-    public Matrix4f getViewMatrix() {
+    public Matrix4 getViewMatrix() {
         return GraphicConveyor.lookAt(position, target);
     }
 
-    public Matrix4f getProjectionMatrix() {
+    public Matrix4 getProjectionMatrix() {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
 
-    private Vector3f position;
-    private Vector3f target;
+    private Vector3 position;
+    private Vector3 target;
     private float fov;
     private float aspectRatio;
     private float nearPlane;
