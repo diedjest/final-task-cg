@@ -1,38 +1,41 @@
 package ru.vsu.cs.finaltaskcg.lighting;
 
-import com.cgvsu.math.Vector3f;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 import javafx.scene.paint.Color;
 
 public class LightCalculator {
 
     public static Color calculateLight(
-            Vector3f vertex,
-            Vector3f normal,
-            Vector3f lightPosition,
+            Vector3 vertex,
+            Vector3 normal,
+            Vector3 lightPosition,
             Color baseColor) {
 
         try {
             // Вектор от вершины к источнику света
-            Vector3f lightDir = lightPosition.subtract(vertex).normalize();
+            Vector3 lightDir = lightPosition.sub(vertex).normalize();
 
             // Нормализуем нормаль
-            Vector3f norm = normal.normalize();
+            Vector3 norm = normal.normalize();
 
             // Диффузное освещение (косинус угла между нормалью и направлением к свету)
-            float diff = Math.max(norm.dot(lightDir), 0.0f);
+            double diff = Math.max(norm.dot(lightDir), 0.0);
 
             // Фоновое освещение
-            float ambient = 0.2f;
+            double ambient = 0.2;
 
             // Зеркальное освещение (простая модель)
-            Vector3f viewDir = new Vector3f(0, 0, -1).normalize(); // Взгляд по умолчанию
-            Vector3f reflectDir = reflect(lightDir.negate(), norm);
-            float spec = (float) Math.pow(Math.max(viewDir.dot(reflectDir), 0.0), 32);
-            float specularStrength = 0.5f;
+            Vector3 viewDir = new Vector3(0, 0, -1).normalize(); // Взгляд по умолчанию
+
+            // Отражаем вектор (lightDir.negate() заменяем на lightDir.mul(-1))
+            Vector3 reflectDir = reflect(lightDir.mul(-1), norm);
+
+            double spec = Math.pow(Math.max(viewDir.dot(reflectDir), 0.0), 32);
+            double specularStrength = 0.5;
 
             // Итоговая интенсивность
-            float intensity = ambient + (diff * 0.7f) + (spec * specularStrength);
-            intensity = Math.min(intensity, 1.0f);
+            double intensity = ambient + (diff * 0.7) + (spec * specularStrength);
+            intensity = Math.min(intensity, 1.0);
 
             // Применяем освещение к цвету
             return new Color(
@@ -48,8 +51,9 @@ public class LightCalculator {
         }
     }
 
-    private static Vector3f reflect(Vector3f incident, Vector3f normal) {
-        float dot = incident.dot(normal);
-        return incident.subtract(normal.multiply(2 * dot));
+    private static Vector3 reflect(Vector3 incident, Vector3 normal) {
+        double dot = incident.dot(normal);
+        // Используем методы из вашего Vector3: sub() и mul()
+        return incident.sub(normal.mul(2 * dot));
     }
 }
