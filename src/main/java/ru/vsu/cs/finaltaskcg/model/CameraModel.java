@@ -1,22 +1,22 @@
 package ru.vsu.cs.finaltaskcg.model;
 
-import com.cgvsu.math.Vector3f;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 import java.util.ArrayList;
 
 public class CameraModel {
 
-    public static Model createCameraModel(Vector3f position, Vector3f target) {
+    public static Model createCameraModel(Vector3 position, Vector3 target) {
         Model model = new Model();
 
         // Вершины пирамиды (камеры)
         // Основание пирамиды
-        model.vertices.add(new Vector3f(-5, -5, 0));
-        model.vertices.add(new Vector3f(5, -5, 0));
-        model.vertices.add(new Vector3f(5, 5, 0));
-        model.vertices.add(new Vector3f(-5, 5, 0));
+        model.vertices.add(new Vector3(-5, -5, 0));
+        model.vertices.add(new Vector3(5, -5, 0));
+        model.vertices.add(new Vector3(5, 5, 0));
+        model.vertices.add(new Vector3(-5, 5, 0));
         // Вершина пирамиды (направление камеры)
-        model.vertices.add(new Vector3f(0, 0, -15));
+        model.vertices.add(new Vector3(0, 0, -15));
 
         // Полигоны
         Polygon base = new Polygon();
