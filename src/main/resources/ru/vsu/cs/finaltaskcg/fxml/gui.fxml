@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.vsu.cs.finaltaskcg.GuiController">
+
+    <MenuBar AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Menu text="File">
+            <MenuItem text="Open Model..." onAction="#onOpenModelMenuItemClick"/>
+            <MenuItem text="Load Texture..." onAction="#onOpenTextureMenuItemClick"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Exit" onAction="#handleExit"/>
+        </Menu>
+        <Menu text="View">
+            <CheckMenuItem fx:id="wireframeMenuItem" text="Draw Wireframe" selected="true"
+                           onAction="#onWireframeModeChanged"/>
+            <CheckMenuItem fx:id="fillMenuItem" text="Fill Triangles" selected="false"
+                           onAction="#onFillModeChanged"/>
+            <CheckMenuItem fx:id="textureMenuItem" text="Use Texture" selected="false"
+                           onAction="#onTextureModeChanged"/>
+            <CheckMenuItem fx:id="lightingMenuItem" text="Use Lighting" selected="false"
+                           onAction="#onLightingModeChanged"/>
+            <CheckMenuItem fx:id="zBufferMenuItem" text="Use Z-Buffer" selected="false"
+                           onAction="#onZBufferModeChanged"/>
+        </Menu>
+        <Menu text="Camera">
+            <MenuItem text="Add Camera" onAction="#onAddCamera"/>
+            <MenuItem text="Remove Current Camera" onAction="#onRemoveCamera"/>
+            <MenuItem text="Next Camera" onAction="#onNextCamera"/>
+            <SeparatorMenuItem/>
+            <MenuItem text="Reset Camera" onAction="#handleCameraReset"/>
+        </Menu>
+        <Menu text="Help">
+            <MenuItem text="About" onAction="#handleAbout"/>
+        </Menu>
+    </MenuBar>
+
+    <Canvas fx:id="canvas" AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="0"
+            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="250"/>
+
+    <VBox spacing="10" AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="0"
+          AnchorPane.rightAnchor="0" style="-fx-background-color: #f0f0f0; -fx-padding: 10;" prefWidth="250">
+        <Label text="Camera Controls" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+        <Separator/>
+
+        <Label text="Movement:" style="-fx-font-weight: bold;"/>
+        <HBox spacing="5">
+            <Button text="W" onAction="#handleCameraForward" prefWidth="40"/>
+            <VBox spacing="5">
+                <HBox spacing="5">
+                    <Button text="A" onAction="#handleCameraLeft" prefWidth="40"/>
+                    <Button text="S" onAction="#handleCameraBackward" prefWidth="40"/>
+                    <Button text="D" onAction="#handleCameraRight" prefWidth="40"/>
+                </HBox>
+                <HBox spacing="5" alignment="CENTER">
+                    <Button text="Q" onAction="#handleCameraUp" prefWidth="40"/>
+                    <Button text="E" onAction="#handleCameraDown" prefWidth="40"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+        <Label text="Rotation:" style="-fx-font-weight: bold;"/>
+        <GridPane hgap="5" vgap="5">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33"/>
+                <ColumnConstraints percentWidth="33"/>
+                <ColumnConstraints percentWidth="33"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints prefHeight="30"/>
+                <RowConstraints prefHeight="30"/>
+                <RowConstraints prefHeight="30"/>
+            </rowConstraints>
+
+            <Button text="↑" onAction="#handleCameraRotateUp" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Button text="←" onAction="#handleCameraRotateLeft" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Button text="→" onAction="#handleCameraRotateRight" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+            <Button text="↓" onAction="#handleCameraRotateDown" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        </GridPane>
+
+        <Separator/>
+        <Label text="Current Camera:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="cameraLabel" text="Camera 1 of 1" style="-fx-font-size: 12;"/>
+        <Button text="Reset Camera" onAction="#handleCameraReset" maxWidth="Infinity"/>
+
+        <Separator/>
+        <Label text="Fill Color:" style="-fx-font-weight: bold;"/>
+        <ColorPicker fx:id="colorPicker" onAction="#onColorChanged"/>
+    </VBox>
+</AnchorPane>
