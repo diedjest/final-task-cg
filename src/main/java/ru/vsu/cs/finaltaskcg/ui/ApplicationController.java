@@ -1,4 +1,4 @@
-package ui;
+package ru.vsu.cs.finaltaskcg.ui;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.io.File;
-//import scene.SceneManager;
+//import ru.vsu.cs.finaltaskcg.scene.SceneManager;
 //import model.Model;
 //import objreader.ObjReader;
 

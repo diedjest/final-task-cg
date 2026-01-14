@@ -1,4 +1,4 @@
-import ui.ApplicationController;
+import ru.vsu.cs.finaltaskcg.ui.ApplicationController;
 
 public class Main {
     public static void main(String[] args) {

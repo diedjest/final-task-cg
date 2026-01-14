@@ -1,4 +1,4 @@
-//package scene;
+//package ru.vsu.cs.finaltaskcg.scene;
 //
 //import model.Model;
 //import java.util.ArrayList;
