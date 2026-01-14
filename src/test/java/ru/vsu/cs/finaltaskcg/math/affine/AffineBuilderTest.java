@@ -2,6 +2,7 @@ package ru.vsu.cs.finaltaskcg.math.affine;
 
 import org.junit.jupiter.api.Test;
 import ru.vsu.cs.finaltaskcg.math.affine.transformation.*;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 
@@ -67,7 +68,7 @@ public class AffineBuilderTest {
         Vector3 result = transformation.apply(point);
         assertEquals(0, result.getX(), EPSILON);
         assertEquals(0, result.getY(), EPSILON);
-        assertEquals(1, result.getZ(), EPSILON); // Проверьте знак! В вашей системе может быть по-другому
+        assertEquals(1, result.getZ(), EPSILON);
     }
 
     @Test
@@ -77,7 +78,7 @@ public class AffineBuilderTest {
         Vector3 result = transformation.apply(point);
         assertEquals(0, result.getX(), EPSILON);
         assertEquals(0, result.getY(), EPSILON);
-        assertEquals(1, result.getZ(), EPSILON); // Проверьте знак!
+        assertEquals(1, result.getZ(), EPSILON);
     }
 
     @Test
@@ -87,7 +88,7 @@ public class AffineBuilderTest {
         Vector3 result = transformation.apply(point);
         assertEquals(1, result.getX(), EPSILON);
         assertEquals(0, result.getY(), EPSILON);
-        assertEquals(0, result.getZ(), EPSILON); // Проверьте знак!
+        assertEquals(0, result.getZ(), EPSILON);
     }
 
     @Test
@@ -97,7 +98,7 @@ public class AffineBuilderTest {
         Vector3 result = transformation.apply(point);
         assertEquals(1, result.getX(), EPSILON);
         assertEquals(0, result.getY(), EPSILON);
-        assertEquals(0, result.getZ(), EPSILON); // Проверьте знак!
+        assertEquals(0, result.getZ(), EPSILON);
     }
 
     @Test
@@ -106,7 +107,7 @@ public class AffineBuilderTest {
         Transformation transformation = new AffineBuilder().rotateZ(Math.PI/2).build();
         Vector3 result = transformation.apply(point);
         assertEquals(0, result.getX(), EPSILON);
-        assertEquals(1, result.getY(), EPSILON); // Проверьте знак!
+        assertEquals(1, result.getY(), EPSILON);
         assertEquals(0, result.getZ(), EPSILON);
     }
 
@@ -116,7 +117,7 @@ public class AffineBuilderTest {
         Transformation transformation = new AffineBuilder().rotateZQuat(Math.PI/2).build();
         Vector3 result = transformation.apply(point);
         assertEquals(0, result.getX(), EPSILON);
-        assertEquals(1, result.getY(), EPSILON); // Проверьте знак!
+        assertEquals(1, result.getY(), EPSILON);
         assertEquals(0, result.getZ(), EPSILON);
     }
 
@@ -276,7 +277,7 @@ public class AffineBuilderTest {
         AffineBuilder builder = new AffineBuilder();
 
         builder.translateX(10).translateY(20).scaleX(2).scaleY(3);
-        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 originalMatrix = builder.build().getMatrix();
+        Matrix4 originalMatrix = builder.build().getMatrix();
 
         SaveTransformation savedState = builder.saveState();
 
@@ -285,12 +286,12 @@ public class AffineBuilderTest {
         builder.rotateY(45).translate(Axis.X, -5);
 
         builder.restoreState(savedState);
-        ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 restoredMatrix = builder.build().getMatrix();
+        Matrix4 restoredMatrix = builder.build().getMatrix();
 
         assertMatrixEquals(originalMatrix, restoredMatrix);
     }
 
-    private void assertMatrixEquals(ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 a, ru.vsu.cs.finaltaskcg.math.matrix.Matrix4 b) {
+    private void assertMatrixEquals(Matrix4 a, Matrix4 b) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 assertEquals(a.get(i, j), b.get(i, j), EPSILON);
