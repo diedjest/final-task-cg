@@ -1,7 +1,9 @@
 package ru.vsu.cs.finaltaskcg.triangulation;
 
-import com.cgvsu.model.Model;
-import com.cgvsu.model.Polygon;
+
+
+import ru.vsu.cs.finaltaskcg.model.Model;
+import ru.vsu.cs.finaltaskcg.model.Polygon;
 
 import java.util.ArrayList;
 

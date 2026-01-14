@@ -1,13 +1,5 @@
 package ru.vsu.cs.finaltaskcg;
 
-import com.cgvsu.math.Vector3f;
-import com.cgvsu.model.CameraModel;
-import com.cgvsu.model.Model;
-import com.cgvsu.normals.NormalCalculator;
-import com.cgvsu.objreader.ObjReader;
-import com.cgvsu.render_engine.Camera;
-import com.cgvsu.render_engine.RenderEngine;
-import com.cgvsu.triangulation.Triangulator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -23,6 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.model.CameraModel;
+import ru.vsu.cs.finaltaskcg.model.Model;
+import ru.vsu.cs.finaltaskcg.normals.NormalCalculator;
+import ru.vsu.cs.finaltaskcg.objreader.ObjReader;
+import ru.vsu.cs.finaltaskcg.render_engine.Camera;
+import ru.vsu.cs.finaltaskcg.render_engine.RenderEngine;
+import ru.vsu.cs.finaltaskcg.triangulation.Triangulator;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,8 +68,8 @@ public class GuiController {
     private int activeCameraIndex = 0;
 
     private Camera camera = new Camera(
-            new Vector3f(0, 0, 100),
-            new Vector3f(0, 0, 0),
+            new Vector3(0, 0, 100),
+            new Vector3(0, 0, 0),
             1.0F, 1, 0.01F, 100);
 
     private Timeline timeline;
@@ -284,15 +284,15 @@ public class GuiController {
     private void onAddCamera(ActionEvent event) {
         // Создаем новую камеру со смещением от текущей
         Camera activeCamera = cameras.get(activeCameraIndex);
-        Vector3f position = new Vector3f(
-                activeCamera.getPosition().x + 50,
-                activeCamera.getPosition().y,
-                activeCamera.getPosition().z
+        Vector3 position = new Vector3(
+                activeCamera.getPosition().getX() + 50,
+                activeCamera.getPosition().getY(),
+                activeCamera.getPosition().getZ()
         );
 
         Camera newCamera = new Camera(
                 position,
-                new Vector3f(0, 0, 0),
+                new Vector3(0, 0, 0),
                 1.0F, 1, 0.01F, 100
         );
 
@@ -367,37 +367,37 @@ public class GuiController {
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(0, 0, -TRANSLATION));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(0, 0, -TRANSLATION));
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(0, 0, TRANSLATION));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(0, 0, TRANSLATION));
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(TRANSLATION, 0, 0));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(TRANSLATION, 0, 0));
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(-TRANSLATION, 0, 0));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(-TRANSLATION, 0, 0));
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(0, TRANSLATION, 0));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(0, TRANSLATION, 0));
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3f(0, -TRANSLATION, 0));
+        cameras.get(activeCameraIndex).movePosition(new Vector3(0, -TRANSLATION, 0));
         updateCameraModels();
     }
 
@@ -405,8 +405,8 @@ public class GuiController {
     @FXML
     public void handleCameraRotateLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3f target = cam.getTarget();
-        target = new Vector3f(target.x + TRANSLATION * 5, target.y, target.z);
+        Vector3 target = cam.getTarget();
+        target = new Vector3(target.getX() + TRANSLATION * 5, target.getY(), target.getZ());
         cam.setTarget(target);
         updateCameraModels();
     }
@@ -414,8 +414,8 @@ public class GuiController {
     @FXML
     public void handleCameraRotateRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3f target = cam.getTarget();
-        target = new Vector3f(target.x - TRANSLATION * 5, target.y, target.z);
+        Vector3 target = cam.getTarget();
+        target = new Vector3(target.getX() - TRANSLATION * 5, target.getY(), target.getZ());
         cam.setTarget(target);
         updateCameraModels();
     }
@@ -423,8 +423,8 @@ public class GuiController {
     @FXML
     public void handleCameraRotateUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3f target = cam.getTarget();
-        target = new Vector3f(target.x, target.y + TRANSLATION * 5, target.z);
+        Vector3 target = cam.getTarget();
+        target = new Vector3(target.getX(), target.getY() + TRANSLATION * 5, target.getZ());
         cam.setTarget(target);
         updateCameraModels();
     }
@@ -432,8 +432,8 @@ public class GuiController {
     @FXML
     public void handleCameraRotateDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3f target = cam.getTarget();
-        target = new Vector3f(target.x, target.y - TRANSLATION * 5, target.z);
+        Vector3 target = cam.getTarget();
+        target = new Vector3(target.getX(), target.getY() - TRANSLATION * 5, target.getZ());
         cam.setTarget(target);
         updateCameraModels();
     }
@@ -442,8 +442,8 @@ public class GuiController {
     @FXML
     public void handleCameraReset(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.setPosition(new Vector3f(0, 0, 100));
-        cam.setTarget(new Vector3f(0, 0, 0));
+        cam.setPosition(new Vector3(0, 0, 100));
+        cam.setTarget(new Vector3(0, 0, 0));
         updateCameraModels();
     }
 

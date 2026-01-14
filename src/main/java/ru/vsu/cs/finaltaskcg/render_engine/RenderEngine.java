@@ -1,14 +1,14 @@
 package ru.vsu.cs.finaltaskcg.render_engine;
 
-import com.cgvsu.math.Matrix4f;
-import com.cgvsu.math.Vector2f;
-import com.cgvsu.math.Vector3f;
-import com.cgvsu.model.Model;
-import com.cgvsu.model.Polygon;
-import com.cgvsu.texture.TextureLoader;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.model.Model;
+import ru.vsu.cs.finaltaskcg.model.Polygon;
+import ru.vsu.cs.finaltaskcg.texture.TextureLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class RenderEngine {
     // Текущие настройки
     private static Color fillColor = Color.LIGHTGRAY;
     private static TextureLoader textureLoader = new TextureLoader();
-    private static Vector3f lightPosition = new Vector3f(0, 100, 100);
+    private static Vector3 lightPosition = new Vector3(0, 100, 100);
     private static Color ambientColor = Color.rgb(50, 50, 50);
     private static Color diffuseColor = Color.rgb(200, 200, 200);
 
@@ -41,7 +41,7 @@ public class RenderEngine {
     private static int pixelsRendered = 0;
 
     // Кэш для преобразованных вершин
-    private static Map<Integer, Vector3f> transformedVerticesCache = new HashMap<>();
+    private static Map<Integer, Vector3> transformedVerticesCache = new HashMap<>();
 
     public static void setRenderMode(boolean wireframe, boolean fill,
                                      boolean texture, boolean lighting,
@@ -61,7 +61,7 @@ public class RenderEngine {
         fillColor = color;
     }
 
-    public static void setLightPosition(Vector3f position) {
+    public static void setLightPosition(Vector3 position) {
         lightPosition = position;
     }
 
@@ -116,15 +116,15 @@ public class RenderEngine {
         }
 
         // Получаем матрицы преобразования
-        Matrix4f modelMatrix = GraphicConveyor.rotateScaleTranslate();
-        Matrix4f viewMatrix = camera.getViewMatrix();
-        Matrix4f projectionMatrix = camera.getProjectionMatrix();
+        Matrix4 modelMatrix = GraphicConveyor.rotateScaleTranslate();
+        Matrix4 viewMatrix = camera.getViewMatrix();
+        Matrix4 projectionMatrix = camera.getProjectionMatrix();
 
         // Комбинированная матрица: Model * View * Projection
-        Matrix4f modelViewProjectionMatrix = modelMatrix.multiply(viewMatrix).multiply(projectionMatrix);
+        Matrix4 modelViewProjectionMatrix = modelMatrix.mul(viewMatrix).mul(projectionMatrix);
 
         // Получаем матрицу ModelView для освещения (без проекции)
-        Matrix4f modelViewMatrix = modelMatrix.multiply(viewMatrix);
+        Matrix4 modelViewMatrix = modelMatrix.mul(viewMatrix);
 
         // Рендерим все полигоны
         final int nPolygons = mesh.polygons.size();
@@ -140,19 +140,19 @@ public class RenderEngine {
             }
 
             // Получаем преобразованные вершины
-            Vector3f[] vertices = new Vector3f[vertexIndices.size()];
-            Vector2f[] screenPoints = new Vector2f[vertexIndices.size()];
-            Vector3f[] worldVertices = new Vector3f[vertexIndices.size()];
+            Vector3[] vertices = new Vector3[vertexIndices.size()];
+            Vector2[] screenPoints = new Vector2[vertexIndices.size()];
+            Vector3[] worldVertices = new Vector3[vertexIndices.size()];
 
             for (int i = 0; i < vertexIndices.size(); i++) {
                 int vertexIndex = vertexIndices.get(i);
 
                 // Используем кэш для преобразованных вершин
-                Vector3f vertex;
+                Vector3 vertex;
                 if (transformedVerticesCache.containsKey(vertexIndex)) {
                     vertex = transformedVerticesCache.get(vertexIndex);
                 } else {
-                    Vector3f originalVertex = mesh.vertices.get(vertexIndex);
+                    Vector3 originalVertex = mesh.vertices.get(vertexIndex);
                     vertex = GraphicConveyor.multiplyMatrix4ByVector3(modelViewProjectionMatrix, originalVertex);
                     transformedVerticesCache.put(vertexIndex, vertex);
                 }
@@ -189,9 +189,9 @@ public class RenderEngine {
 
     private static void renderTriangle(
             final GraphicsContext graphicsContext,
-            final Vector3f[] vertices,
-            final Vector2f[] screenPoints,
-            final Vector3f[] worldVertices,
+            final Vector3[] vertices,
+            final Vector2[] screenPoints,
+            final Vector3[] worldVertices,
             final Polygon polygon,
             final Model mesh,
             final int width,
@@ -223,8 +223,8 @@ public class RenderEngine {
             final GraphicsContext graphicsContext,
             final Polygon polygon,
             final Model mesh,
-            final Matrix4f modelViewProjectionMatrix,
-            final Matrix4f modelViewMatrix,
+            final Matrix4 modelViewProjectionMatrix,
+            final Matrix4 modelViewMatrix,
             final int width,
             final int height) {
 
@@ -233,13 +233,13 @@ public class RenderEngine {
         // Триангуляция веером
         for (int i = 1; i < vertexIndices.size() - 1; i++) {
             int[] triIndices = {0, i, i + 1};
-            Vector3f[] triVertices = new Vector3f[3];
-            Vector2f[] triScreenPoints = new Vector2f[3];
-            Vector3f[] triWorldVertices = new Vector3f[3];
+            Vector3[] triVertices = new Vector3[3];
+            Vector2[] triScreenPoints = new Vector2[3];
+            Vector3[] triWorldVertices = new Vector3[3];
 
             for (int j = 0; j < 3; j++) {
                 int vertexIndex = vertexIndices.get(triIndices[j]);
-                Vector3f originalVertex = mesh.vertices.get(vertexIndex);
+                Vector3 originalVertex = mesh.vertices.get(vertexIndex);
 
                 triVertices[j] = GraphicConveyor.multiplyMatrix4ByVector3(modelViewProjectionMatrix, originalVertex);
                 triScreenPoints[j] = GraphicConveyor.vertexToPoint(triVertices[j], width, height);
@@ -277,17 +277,17 @@ public class RenderEngine {
         }
     }
 
-    private static boolean isTriangleVisible(Vector2f[] points, int width, int height) {
+    private static boolean isTriangleVisible(Vector2[] points, int width, int height) {
         // Проверяем, находится ли хоть одна точка в пределах экрана
-        for (Vector2f point : points) {
-            if (point.x >= 0 && point.x <= width && point.y >= 0 && point.y <= height) {
+        for (Vector2 point : points) {
+            if (point.getX() >= 0 && point.getX() <= width && point.getY() >= 0 && point.getY() <= height) {
                 return true;
             }
         }
         return false;
     }
 
-    private static Color getTriangleColor(Polygon polygon, Model mesh, Vector3f[] worldVertices) {
+    private static Color getTriangleColor(Polygon polygon, Model mesh, Vector3[] worldVertices) {
         Color color = fillColor;
 
         // Если есть текстура и она загружена
@@ -309,8 +309,8 @@ public class RenderEngine {
             if (!polygon.getTextureVertexIndices().isEmpty()) {
                 int texIndex = polygon.getTextureVertexIndices().get(0);
                 if (texIndex >= 0 && texIndex < mesh.textureVertices.size()) {
-                    Vector2f texCoord = mesh.textureVertices.get(texIndex);
-                    return textureLoader.getColor(texCoord.x, texCoord.y);
+                    Vector2 texCoord = mesh.textureVertices.get(texIndex);
+                    return textureLoader.getColor((float) texCoord.getX(), (float) texCoord.getY());
                 }
             }
         } catch (Exception e) {
@@ -321,28 +321,28 @@ public class RenderEngine {
     }
 
     private static Color applyLighting(Polygon polygon, Model mesh,
-                                       Vector3f[] worldVertices, Color baseColor) {
+                                       Vector3[] worldVertices, Color baseColor) {
         try {
             // Вычисляем нормаль треугольника
-            Vector3f v0 = worldVertices[0];
-            Vector3f v1 = worldVertices[1];
-            Vector3f v2 = worldVertices[2];
+            Vector3 v0 = worldVertices[0];
+            Vector3 v1 = worldVertices[1];
+            Vector3 v2 = worldVertices[2];
 
-            Vector3f edge1 = v1.subtract(v0);
-            Vector3f edge2 = v2.subtract(v0);
-            Vector3f normal = edge1.cross(edge2).normalize();
+            Vector3 edge1 = v1.sub(v0);
+            Vector3 edge2 = v2.sub(v0);
+            Vector3 normal = edge1.cross(edge2).normalize();
 
             // Вектор от треугольника к источнику света
-            Vector3f lightDir = lightPosition.subtract(v0).normalize();
+            Vector3 lightDir = lightPosition.sub(v0).normalize();
 
             // Диффузное освещение (косинус угла между нормалью и направлением света)
-            float diff = Math.max(normal.dot(lightDir), 0.0f);
+            double diff = Math.max(normal.dot(lightDir), 0.0f);
 
             // Фоновое освещение
             float ambient = 0.2f;
 
             // Итоговая интенсивность
-            float intensity = ambient + diff * 0.8f;
+            double intensity = ambient + diff * 0.8f;
             intensity = Math.min(intensity, 1.0f);
 
             // Применяем освещение к цвету
@@ -359,35 +359,35 @@ public class RenderEngine {
         }
     }
 
-    private static void fillTriangleSimple(GraphicsContext gc, Vector2f[] points, Color color) {
-        double[] xPoints = {points[0].x, points[1].x, points[2].x};
-        double[] yPoints = {points[0].y, points[1].y, points[2].y};
+    private static void fillTriangleSimple(GraphicsContext gc, Vector2[] points, Color color) {
+        double[] xPoints = {points[0].getX(), points[1].getX(), points[2].getX()};
+        double[] yPoints = {points[0].getY(), points[1].getY(), points[2].getY()};
 
         gc.setFill(color);
         gc.fillPolygon(xPoints, yPoints, 3);
     }
 
     private static void fillTriangleZBuffer(GraphicsContext gc,
-                                            Vector3f[] vertices,
-                                            Vector2f[] screenPoints,
+                                            Vector3[] vertices,
+                                            Vector2[] screenPoints,
                                             Color color) {
 
         // Находим ограничивающий прямоугольник
-        float minX = Math.max(0, Math.min(screenPoints[0].x,
-                Math.min(screenPoints[1].x, screenPoints[2].x)));
-        float maxX = Math.min(zBuffer.getWidth() - 1, Math.max(screenPoints[0].x,
-                Math.max(screenPoints[1].x, screenPoints[2].x)));
-        float minY = Math.max(0, Math.min(screenPoints[0].y,
-                Math.min(screenPoints[1].y, screenPoints[2].y)));
-        float maxY = Math.min(zBuffer.getHeight() - 1, Math.max(screenPoints[0].y,
-                Math.max(screenPoints[1].y, screenPoints[2].y)));
+        double minX = Math.max(0, Math.min(screenPoints[0].getX(),
+                Math.min(screenPoints[1].getX(), screenPoints[2].getX())));
+        double maxX = Math.min(zBuffer.getWidth() - 1, Math.max(screenPoints[0].getX(),
+                Math.max(screenPoints[1].getX(), screenPoints[2].getX())));
+        double minY = Math.max(0, Math.min(screenPoints[0].getY(),
+                Math.min(screenPoints[1].getY(), screenPoints[2].getY())));
+        double maxY = Math.min(zBuffer.getHeight() - 1, Math.max(screenPoints[0].getY(),
+                Math.max(screenPoints[1].getY(), screenPoints[2].getY())));
 
         if (minX > maxX || minY > maxY) {
             return;
         }
 
         // Вычисляем площадь треугольника
-        float area = edgeFunction(screenPoints[0], screenPoints[1], screenPoints[2]);
+        double area = edgeFunction(screenPoints[0], screenPoints[1], screenPoints[2]);
 
         if (area == 0) {
             return;
@@ -399,9 +399,9 @@ public class RenderEngine {
         for (int y = (int)minY; y <= maxY; y++) {
             for (int x = (int)minX; x <= maxX; x++) {
                 // Вычисляем барицентрические координаты
-                float w0 = edgeFunction(screenPoints[1], screenPoints[2], x, y);
-                float w1 = edgeFunction(screenPoints[2], screenPoints[0], x, y);
-                float w2 = edgeFunction(screenPoints[0], screenPoints[1], x, y);
+                double w0 = edgeFunction(screenPoints[1], screenPoints[2], x, y);
+                double w1 = edgeFunction(screenPoints[2], screenPoints[0], x, y);
+                double w2 = edgeFunction(screenPoints[0], screenPoints[1], x, y);
 
                 // Если точка внутри треугольника
                 if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
@@ -411,7 +411,7 @@ public class RenderEngine {
                     w2 /= area;
 
                     // Интерполируем Z-координату
-                    float z = w0 * vertices[0].z + w1 * vertices[1].z + w2 * vertices[2].z;
+                    double z = w0 * vertices[0].getZ() + w1 * vertices[1].getZ() + w2 * vertices[2].getZ();
 
                     // Проверяем Z-буфер
                     if (zBuffer.testAndSet(x, y, z)) {
@@ -423,15 +423,15 @@ public class RenderEngine {
         }
     }
 
-    private static float edgeFunction(Vector2f a, Vector2f b, Vector2f c) {
-        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    private static double edgeFunction(Vector2 a, Vector2 b, Vector2 c) {
+        return (b.getX() - a.getX()) * (c.getY() - a.getY() - (b.getY() - a.getY() * (c.getX() - a.getX())));
     }
 
-    private static float edgeFunction(Vector2f a, Vector2f b, int px, int py) {
-        return (b.x - a.x) * (py - a.y) - (b.y - a.y) * (px - a.x);
+    private static double edgeFunction(Vector2 a, Vector2 b, int px, int py) {
+        return (b.getX() - a.getX()) * (py - a.getY() - (b.getY() - a.getY() * (px - a.getX())));
     }
 
-    private static void drawWireframe(GraphicsContext gc, Vector2f[] points) {
+    private static void drawWireframe(GraphicsContext gc, Vector2[] points) {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
 
@@ -439,8 +439,8 @@ public class RenderEngine {
         for (int i = 0; i < points.length; i++) {
             int next = (i + 1) % points.length;
             gc.strokeLine(
-                    points[i].x, points[i].y,
-                    points[next].x, points[next].y
+                    points[i].getX(), points[i].getY(),
+                    points[next].getX(), points[next].getY()
             );
         }
     }
@@ -461,21 +461,21 @@ public class RenderEngine {
         Color cameraColor = Color.RED;
 
         // Получаем матрицы преобразования
-        Matrix4f modelMatrix = GraphicConveyor.rotateScaleTranslate();
-        Matrix4f viewMatrix = activeCamera.getViewMatrix();
-        Matrix4f projectionMatrix = activeCamera.getProjectionMatrix();
+        Matrix4 modelMatrix = GraphicConveyor.rotateScaleTranslate();
+        Matrix4 viewMatrix = activeCamera.getViewMatrix();
+        Matrix4 projectionMatrix = activeCamera.getProjectionMatrix();
 
-        Matrix4f modelViewProjectionMatrix = modelMatrix.multiply(viewMatrix).multiply(projectionMatrix);
+        Matrix4 modelViewProjectionMatrix = modelMatrix.mul(viewMatrix).mul(projectionMatrix);
 
         // Рендерим модель камеры
         for (Polygon polygon : cameraModel.polygons) {
             ArrayList<Integer> vertexIndices = polygon.getVertexIndices();
 
-            ArrayList<Vector2f> resultPoints = new ArrayList<>();
+            ArrayList<Vector2> resultPoints = new ArrayList<>();
             for (Integer vertexIndex : vertexIndices) {
-                Vector3f vertex = cameraModel.vertices.get(vertexIndex);
-                Vector3f transformed = GraphicConveyor.multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex);
-                Vector2f resultPoint = GraphicConveyor.vertexToPoint(transformed, width, height);
+                Vector3 vertex = cameraModel.vertices.get(vertexIndex);
+                Vector3 transformed = GraphicConveyor.multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertex);
+                Vector2 resultPoint = GraphicConveyor.vertexToPoint(transformed, width, height);
                 resultPoints.add(resultPoint);
             }
 
@@ -486,8 +486,8 @@ public class RenderEngine {
             for (int i = 0; i < resultPoints.size(); i++) {
                 int next = (i + 1) % resultPoints.size();
                 graphicsContext.strokeLine(
-                        resultPoints.get(i).x, resultPoints.get(i).y,
-                        resultPoints.get(next).x, resultPoints.get(next).y
+                        resultPoints.get(i).getX(), resultPoints.get(i).getY(),
+                        resultPoints.get(next).getX(), resultPoints.get(next).getY()
                 );
             }
         }
