@@ -1,4 +1,4 @@
-package ui;
+package ru.vsu.cs.finaltaskcg.ui;
 
 import javax.swing.*;
 import java.io.File;
