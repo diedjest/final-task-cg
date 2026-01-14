@@ -1,21 +1,21 @@
 package ru.vsu.cs.finaltaskcg.render_engine;
 
-import com.cgvsu.math.Vector3f;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 public class Rasterizer {
 
     public static void fillTriangle(
             GraphicsContext gc,
             ZBuffer zBuffer,
-            Vector3f v1, Vector3f v2, Vector3f v3,
+            Vector3 v1, Vector3 v2, Vector3 v3,
             Color color) {
 
         // Преобразуем вершины в экранные координаты
-        int[] xs = {(int) v1.x, (int) v2.x, (int) v3.x};
-        int[] ys = {(int) v1.y, (int) v2.y, (int) v3.y};
-        float[] zs = {v1.z, v2.z, v3.z};
+        int[] xs = {(int) v1.getX(), (int) v2.getX(), (int) v3.getX()};
+        int[] ys = {(int) v1.getY(), (int) v2.getY(), (int) v3.getY()};
+        double[] zs = {v1.getZ(), v2.getZ(), v3.getZ()};
 
         // Находим границы треугольника
         int minX = Math.max(0, Math.min(xs[0], Math.min(xs[1], xs[2])));
@@ -40,7 +40,7 @@ public class Rasterizer {
                     w2 /= area;
 
                     // Интерполяция Z
-                    float z = w0 * zs[0] + w1 * zs[1] + w2 * zs[2];
+                    double z = w0 * zs[0] + w1 * zs[1] + w2 * zs[2];
 
                     // Проверка Z-буфера
                     if (zBuffer.testAndSet(x, y, z)) {
