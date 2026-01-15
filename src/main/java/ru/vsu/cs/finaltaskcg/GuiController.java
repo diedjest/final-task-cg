@@ -447,42 +447,42 @@ public class GuiController {
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveForwardBackward(-TRANSLATION);
+        cam.moveForwardBackward(TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveForwardBackward(TRANSLATION);
+        cam.moveForwardBackward(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveRightLeft(-TRANSLATION);
+        cam.moveRightLeft(TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveRightLeft(TRANSLATION);
+        cam.moveRightLeft(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveUpDown(TRANSLATION);
+        cam.moveUpDown(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveUpDown(-TRANSLATION);
+        cam.moveUpDown(TRANSLATION);
         updateCameraModels();
     }
 
@@ -490,28 +490,28 @@ public class GuiController {
     @FXML
     public void handleCameraRotateLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(0, 5, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(0, -5, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(0, -5, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(0, 5, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
