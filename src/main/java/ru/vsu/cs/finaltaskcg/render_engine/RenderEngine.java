@@ -310,7 +310,7 @@ public class RenderEngine {
                 int texIndex = polygon.getTextureVertexIndices().get(0);
                 if (texIndex >= 0 && texIndex < mesh.textureVertices.size()) {
                     Vector2 texCoord = mesh.textureVertices.get(texIndex);
-                    return textureLoader.getColor((float) texCoord.getX(), (float) texCoord.getY());
+                    return textureLoader.getColor(texCoord.getX(), texCoord.getY());
                 }
             }
         } catch (Exception e) {
@@ -339,7 +339,7 @@ public class RenderEngine {
             double diff = Math.max(normal.dot(lightDir), 0.0f);
 
             // Фоновое освещение
-            float ambient = 0.2f;
+            double ambient = 0.2f;
 
             // Итоговая интенсивность
             double intensity = ambient + diff * 0.8f;

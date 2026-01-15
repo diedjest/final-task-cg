@@ -8,10 +8,10 @@ public class Camera {
     public Camera(
             final Vector3 position,
             final Vector3 target,
-            final float fov,
-            final float aspectRatio,
-            final float nearPlane,
-            final float farPlane) {
+            final double fov,
+            final double aspectRatio,
+            final double nearPlane,
+            final double farPlane) {
         this.position = position;
         this.target = target;
         this.fov = fov;
@@ -28,7 +28,7 @@ public class Camera {
         this.target = target;
     }
 
-    public void setAspectRatio(final float aspectRatio) {
+    public void setAspectRatio(final double aspectRatio) {
         this.aspectRatio = aspectRatio;
     }
 
@@ -58,8 +58,8 @@ public class Camera {
 
     private Vector3 position;
     private Vector3 target;
-    private float fov;
-    private float aspectRatio;
-    private float nearPlane;
-    private float farPlane;
+    private double fov;
+    private double aspectRatio;
+    private double nearPlane;
+    private double farPlane;
 }

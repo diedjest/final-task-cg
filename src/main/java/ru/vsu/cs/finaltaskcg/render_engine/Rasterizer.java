@@ -24,14 +24,14 @@ public class Rasterizer {
         int maxY = Math.min(zBuffer.getHeight() - 1, Math.max(ys[0], Math.max(ys[1], ys[2])));
 
         // Вычисляем площадь треугольника
-        float area = edgeFunction(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
+        double area = edgeFunction(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2]);
 
         for (int y = minY; y <= maxY; y++) {
             for (int x = minX; x <= maxX; x++) {
                 // Проверяем, находится ли точка внутри треугольника
-                float w0 = edgeFunction(xs[1], ys[1], xs[2], ys[2], x, y);
-                float w1 = edgeFunction(xs[2], ys[2], xs[0], ys[0], x, y);
-                float w2 = edgeFunction(xs[0], ys[0], xs[1], ys[1], x, y);
+                double w0 = edgeFunction(xs[1], ys[1], xs[2], ys[2], x, y);
+                double w1 = edgeFunction(xs[2], ys[2], xs[0], ys[0], x, y);
+                double w2 = edgeFunction(xs[0], ys[0], xs[1], ys[1], x, y);
 
                 if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
                     // Барицентрические координаты
@@ -51,7 +51,7 @@ public class Rasterizer {
         }
     }
 
-    private static float edgeFunction(int ax, int ay, int bx, int by, int px, int py) {
+    private static double edgeFunction(int ax, int ay, int bx, int by, int px, int py) {
         return (bx - ax) * (py - ay) - (by - ay) * (px - ax);
     }
 }

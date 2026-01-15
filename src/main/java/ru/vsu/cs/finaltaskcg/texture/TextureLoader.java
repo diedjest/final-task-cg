@@ -30,14 +30,14 @@ public class TextureLoader {
         }
     }
 
-    public javafx.scene.paint.Color getColor(float u, float v) {
+    public javafx.scene.paint.Color getColor(double u, double v) {
         if (pixelReader == null) {
             return javafx.scene.paint.Color.GRAY;
         }
 
         // Приводим UV координаты к диапазону [0, 1]
-        u = u - (float) Math.floor(u);
-        v = v - (float) Math.floor(v);
+        u = u - Math.floor(u);
+        v = v - Math.floor(v);
 
         int x = (int) (u * (textureWidth - 1));
         int y = (int) ((1 - v) * (textureHeight - 1)); // Flip V coordinate
