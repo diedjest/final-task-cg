@@ -30,10 +30,10 @@ public class GraphicConveyor {
     }
 
     public static Matrix4 perspective(
-            final float fov,
-            final float aspectRatio,
-            final float nearPlane,
-            final float farPlane) {
+            final double fov,
+            final double aspectRatio,
+            final double nearPlane,
+            final double farPlane) {
 
         double tangentMinusOnDegree =  1.0 / Math.tan(fov * 0.5);
 

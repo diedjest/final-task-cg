@@ -58,12 +58,12 @@ public class ObjReader {
 	protected static Vector3 parseVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
 		try {
 			return new Vector3(
-					Float.parseFloat(wordsInLineWithoutToken.get(0)),
-					Float.parseFloat(wordsInLineWithoutToken.get(1)),
-					Float.parseFloat(wordsInLineWithoutToken.get(2)));
+					Double.parseDouble(wordsInLineWithoutToken.get(0)),
+					Double.parseDouble(wordsInLineWithoutToken.get(1)),
+					Double.parseDouble(wordsInLineWithoutToken.get(2)));
 
 		} catch(NumberFormatException e) {
-			throw new ObjReaderException("Failed to parse float value.", lineInd);
+			throw new ObjReaderException("Failed to parse double value.", lineInd);
 
 		} catch(IndexOutOfBoundsException e) {
 			throw new ObjReaderException("Too few vertex arguments.", lineInd);
@@ -73,11 +73,11 @@ public class ObjReader {
 	protected static Vector2 parseTextureVertex(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
 		try {
 			return new Vector2(
-					Float.parseFloat(wordsInLineWithoutToken.get(0)),
-					Float.parseFloat(wordsInLineWithoutToken.get(1)));
+					Double.parseDouble(wordsInLineWithoutToken.get(0)),
+					Double.parseDouble(wordsInLineWithoutToken.get(1)));
 
 		} catch(NumberFormatException e) {
-			throw new ObjReaderException("Failed to parse float value.", lineInd);
+			throw new ObjReaderException("Failed to parse double value.", lineInd);
 
 		} catch(IndexOutOfBoundsException e) {
 			throw new ObjReaderException("Too few texture vertex arguments.", lineInd);
@@ -87,12 +87,12 @@ public class ObjReader {
 	protected static Vector3 parseNormal(final ArrayList<String> wordsInLineWithoutToken, int lineInd) {
 		try {
 			return new Vector3(
-					Float.parseFloat(wordsInLineWithoutToken.get(0)),
-					Float.parseFloat(wordsInLineWithoutToken.get(1)),
-					Float.parseFloat(wordsInLineWithoutToken.get(2)));
+					Double.parseDouble(wordsInLineWithoutToken.get(0)),
+					Double.parseDouble(wordsInLineWithoutToken.get(1)),
+					Double.parseDouble(wordsInLineWithoutToken.get(2)));
 
 		} catch(NumberFormatException e) {
-			throw new ObjReaderException("Failed to parse float value.", lineInd);
+			throw new ObjReaderException("Failed to parse double value.", lineInd);
 
 		} catch(IndexOutOfBoundsException e) {
 			throw new ObjReaderException("Too few normal arguments.", lineInd);

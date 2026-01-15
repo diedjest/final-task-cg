@@ -74,6 +74,15 @@ public class GuiController {
 
     private Timeline timeline;
 
+    private boolean isMousePressed = false;
+    private boolean isMiddleMousePressed = false;
+    private double lastMouseX = 0;
+    private double lastMouseY = 0;
+    private final double MOUSE_SENSITIVITY = 0.2;
+    private final double PAN_SENSITIVITY = 0.005;
+    private final double ZOOM_SENSITIVITY = 0.05;
+    private final double ROTATION_SENSITIVITY = 0.5;
+
     @FXML
     private void initialize() {
         anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> {
@@ -182,6 +191,76 @@ public class GuiController {
 
         timeline.getKeyFrames().add(frame);
         timeline.play();
+        setupMouseHandlers();
+    }
+
+    private void setupMouseHandlers() {
+        // Обработка нажатия мыши
+        anchorPane.setOnMousePressed(event -> {
+            if (event.isPrimaryButtonDown()) {
+                // Левая кнопка мыши - панорамирование (движение камеры)
+                isMousePressed = true;
+                lastMouseX = event.getX();
+                lastMouseY = event.getY();
+                event.consume();
+            } else if (event.isMiddleButtonDown()) {
+                // Средняя кнопка мыши - вращение
+                isMiddleMousePressed = true;
+                lastMouseX = event.getX();
+                lastMouseY = event.getY();
+                event.consume();
+            }
+        });
+
+        // Обработка перетаскивания мыши
+        anchorPane.setOnMouseDragged(event -> {
+            if (isMousePressed && !isMiddleMousePressed) {
+                // Панорамирование левой кнопкой мыши
+                double deltaX = event.getX() - lastMouseX;
+                double deltaY = event.getY() - lastMouseY;
+
+                Camera cam = cameras.get(activeCameraIndex);
+                cam.pan((float)deltaX, (float)deltaY, PAN_SENSITIVITY);
+
+                updateCameraModels();
+                lastMouseX = event.getX();
+                lastMouseY = event.getY();
+                event.consume();
+
+            } else if (isMiddleMousePressed) {
+                // Вращение средней кнопкой мыши
+                double deltaX = event.getX() - lastMouseX;
+                double deltaY = event.getY() - lastMouseY;
+
+                Camera cam = cameras.get(activeCameraIndex);
+                cam.rotateAroundTarget((float)deltaX, (float)deltaY, ROTATION_SENSITIVITY);
+
+                updateCameraModels();
+                lastMouseX = event.getX();
+                lastMouseY = event.getY();
+                event.consume();
+            }
+        });
+
+        // Обработка отпускания кнопок мыши
+        anchorPane.setOnMouseReleased(event -> {
+            isMousePressed = false;
+            isMiddleMousePressed = false;
+        });
+
+        // Обработка колесика мыши
+        anchorPane.setOnScroll(event -> {
+            Camera cam = cameras.get(activeCameraIndex);
+
+            // Zoom колесиком мыши
+            cam.zoom((float)event.getDeltaY(), ZOOM_SENSITIVITY);
+
+            updateCameraModels();
+            event.consume();
+        });
+
+        // Убираем выделение текста при перетаскивании
+        anchorPane.setOnDragDetected(event -> anchorPane.startFullDrag());
     }
 
     @FXML
@@ -367,37 +446,43 @@ public class GuiController {
 
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(0, 0, -TRANSLATION));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveForwardBackward(TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(0, 0, TRANSLATION));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveForwardBackward(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(TRANSLATION, 0, 0));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveRightLeft(TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(-TRANSLATION, 0, 0));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveRightLeft(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(0, TRANSLATION, 0));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveUpDown(-TRANSLATION);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
-        cameras.get(activeCameraIndex).movePosition(new Vector3(0, -TRANSLATION, 0));
+        Camera cam = cameras.get(activeCameraIndex);
+        cam.moveUpDown(TRANSLATION);
         updateCameraModels();
     }
 
@@ -405,36 +490,28 @@ public class GuiController {
     @FXML
     public void handleCameraRotateLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3 target = cam.getTarget();
-        target = new Vector3(target.getX() + TRANSLATION * 5, target.getY(), target.getZ());
-        cam.setTarget(target);
+        cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3 target = cam.getTarget();
-        target = new Vector3(target.getX() - TRANSLATION * 5, target.getY(), target.getZ());
-        cam.setTarget(target);
+        cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3 target = cam.getTarget();
-        target = new Vector3(target.getX(), target.getY() + TRANSLATION * 5, target.getZ());
-        cam.setTarget(target);
+        cam.rotateAroundTarget(0, -5, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 
     @FXML
     public void handleCameraRotateDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        Vector3 target = cam.getTarget();
-        target = new Vector3(target.getX(), target.getY() - TRANSLATION * 5, target.getZ());
-        cam.setTarget(target);
+        cam.rotateAroundTarget(0, 5, ROTATION_SENSITIVITY);
         updateCameraModels();
     }
 

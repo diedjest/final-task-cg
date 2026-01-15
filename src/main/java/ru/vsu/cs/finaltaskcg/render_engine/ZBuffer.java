@@ -15,7 +15,7 @@ public class ZBuffer {
     public void clear() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                buffer[y][x] = Float.POSITIVE_INFINITY;
+                buffer[y][x] = Double.POSITIVE_INFINITY;
             }
         }
     }

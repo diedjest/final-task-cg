@@ -5,30 +5,150 @@ import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 public class Camera {
 
+    private Vector3 position;
+    private Vector3 target;
+    private double fov;
+    private double aspectRatio;
+    private double nearPlane;
+    private double farPlane;
+    private Vector3 direction;
+    private Vector3 upVector  = new Vector3(0, 1, 0);
+
     public Camera(
             final Vector3 position,
             final Vector3 target,
-            final float fov,
-            final float aspectRatio,
-            final float nearPlane,
-            final float farPlane) {
+            final double fov,
+            final double aspectRatio,
+            final double nearPlane,
+            final double farPlane) {
         this.position = position;
         this.target = target;
         this.fov = fov;
         this.aspectRatio = aspectRatio;
         this.nearPlane = nearPlane;
         this.farPlane = farPlane;
+
+        updateCameraVectors();
+    }
+
+    private void updateCameraVectors() {
+        direction = target.sub(position).normalize();
+    }
+
+    // Метод для вращения камеры вокруг цели
+    public void rotateAroundTarget(double deltaX, double deltaY, double sensitivity) {
+        // Получаем вектор от камеры к цели
+        Vector3 cameraToTarget = position.sub(target);
+
+        // Вращение по горизонтали (yaw)
+        double horizontalAngle = (-deltaX * sensitivity * Math.PI / 180.0);
+
+        // Вращение по вертикали (pitch)
+        double verticalAngle = (-deltaY * sensitivity * Math.PI / 180.0);
+
+        // Текущее расстояние от камеры до цели
+        double distance = cameraToTarget.length();
+
+        // Вычисляем сферические координаты
+        double theta = Math.atan2(cameraToTarget.getX(), cameraToTarget.getZ());
+        double phi = Math.atan2(Math.sqrt(cameraToTarget.getX() * cameraToTarget.getX() +
+                        cameraToTarget.getZ() * cameraToTarget.getZ()),
+                cameraToTarget.getY());
+
+        // Применяем вращение
+        theta += horizontalAngle;
+        phi += verticalAngle;
+
+        // Ограничиваем угол phi, чтобы камера не переворачивалась
+        double epsilon = 0.01f;
+        phi = Math.max(epsilon, Math.min(Math.PI - epsilon, phi));
+
+        // Преобразуем обратно в декартовы координаты
+        double x = distance * (Math.sin(phi) * Math.sin(theta));
+        double y = distance * Math.cos(phi);
+        double z = distance * (Math.sin(phi) * Math.cos(theta));
+
+        // Обновляем позицию камеры
+        position = new Vector3(x, y, z).add(target);
+
+        updateCameraVectors();
+    }
+
+    // Метод для панорамирования (движения камеры с сохранением направления)
+    public void pan(double deltaX, double deltaY, double sensitivity) {
+        // Вычисляем правый вектор
+        Vector3 right = direction.cross(upVector).normalize();
+
+        // Вычисляем истинный up вектор (перпендикулярный направлению и правому вектору)
+        Vector3 realUp = right.cross(direction).normalize();
+
+        // Двигаем камеру и цель
+        Vector3 translation = right.mul(-deltaX * sensitivity)
+                .add(realUp.mul(deltaY * sensitivity));
+
+        position = position.add(translation);
+        target = target.add(translation);
+
+        updateCameraVectors();
+    }
+
+    public void zoom(double delta, double sensitivity) {
+        // Вектор от камеры к цели
+        Vector3 toTarget = target.sub(position);
+        double distance = toTarget.length();
+
+        // Изменяем расстояние с ограничением
+        double newDistance = Math.max(0.1f, distance - delta * sensitivity);
+
+        // Новая позиция камеры
+        Vector3 newPosition = target.sub(toTarget.normalize().mul(newDistance));
+
+        position = newPosition;
+
+        updateCameraVectors();
+    }
+
+    // Дополнительный метод для движения вперед/назад по направлению взгляда
+    public void moveForwardBackward(double amount) {
+        Vector3 forward = direction.normalize().mul(amount);
+        position = position.add(forward);
+        target = target.add(forward);
+        updateCameraVectors();
+    }
+
+    // Метод для движения вправо/влево
+    public void moveRightLeft(double amount) {
+        Vector3 right = direction.cross(upVector).normalize().mul(amount);
+        position = position.add(right);
+        target = target.add(right);
+        updateCameraVectors();
+    }
+
+    // Метод для движения вверх/вниз
+    public void moveUpDown(double amount) {
+        Vector3 up = upVector.mul(amount);
+        position = position.add(up);
+        target = target.add(up);
+        updateCameraVectors();
     }
 
     public void setPosition(final Vector3 position) {
         this.position = position;
     }
 
+    public double getFov() {
+        return fov;
+    }
+
+    public void setFov(double fov) {
+        this.fov = fov;
+    }
+
     public void setTarget(final Vector3 target) {
         this.target = target;
     }
 
-    public void setAspectRatio(final float aspectRatio) {
+    public void setAspectRatio(final double aspectRatio) {
         this.aspectRatio = aspectRatio;
     }
 
@@ -55,11 +175,4 @@ public class Camera {
     public Matrix4 getProjectionMatrix() {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
-
-    private Vector3 position;
-    private Vector3 target;
-    private float fov;
-    private float aspectRatio;
-    private float nearPlane;
-    private float farPlane;
 }
