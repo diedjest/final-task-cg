@@ -8,15 +8,6 @@ public final class MathValidator {
 
     private MathValidator() {}
 
-    public static void checkIndex(int index, int max, String name) {
-        if (index < 0 || index >= max) {
-            throw new MathException(
-                    String.format("%s index must be in range [0, %d). Got: %d",
-                            name, max, index)
-            );
-        }
-    }
-
     public static void checkMatrixIndex(int row, int col, int rows, int cols) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new MathException(
