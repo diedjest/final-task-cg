@@ -874,6 +874,7 @@ public class ApplicationController {
             statusLabel.setText("Модель масштабирована");
         }
 
+        activeModel.applyTransformations();
         isRendering = true;
     }
 
