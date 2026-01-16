@@ -31,77 +31,59 @@ public class Camera {
         updateCameraVectors();
     }
 
-    /**
-     * Updates camera direction vector using position and target
-     *
-     * @author Dmitriy Uvarov
-     */
     private void updateCameraVectors() {
         direction = target.sub(position).normalize();
     }
 
-    /**
-     * Rotates camera around the target point using spherical coordinates
-     *
-     * @param deltaX mouse horizontal movement delta
-     * @param deltaY mouse vertical movement delta
-     * @param sensitivity rotation sensitivity
-     * @author Dmitriy Uvarov
-     */
+    // Метод для вращения камеры вокруг цели
     public void rotateAroundTarget(double deltaX, double deltaY, double sensitivity) {
+        // Получаем вектор от камеры к цели
         Vector3 cameraToTarget = position.sub(target);
 
-        // yaw
-        double horizontalAngle = (deltaX * sensitivity * Math.PI / 180.0);
+        // Вращение по горизонтали (yaw)
+        double horizontalAngle = (-deltaX * sensitivity * Math.PI / 180.0);
 
-        // pitch
+        // Вращение по вертикали (pitch)
         double verticalAngle = (-deltaY * sensitivity * Math.PI / 180.0);
 
-        // расстояние от камеры до цели
+        // Текущее расстояние от камеры до цели
         double distance = cameraToTarget.length();
 
-        // сферические координаты
+        // Вычисляем сферические координаты
         double theta = Math.atan2(cameraToTarget.getX(), cameraToTarget.getZ());
         double phi = Math.atan2(Math.sqrt(cameraToTarget.getX() * cameraToTarget.getX() +
                         cameraToTarget.getZ() * cameraToTarget.getZ()),
                 cameraToTarget.getY());
 
-        // применяем вращение
+        // Применяем вращение
         theta += horizontalAngle;
         phi += verticalAngle;
 
-        // ограничиваем угол phi, чтобы камера не переворачивалась
-        double epsilon = 0.01;
+        // Ограничиваем угол phi, чтобы камера не переворачивалась
+        double epsilon = 0.01f;
         phi = Math.max(epsilon, Math.min(Math.PI - epsilon, phi));
 
-        // декартовы координаты
+        // Преобразуем обратно в декартовы координаты
         double x = distance * (Math.sin(phi) * Math.sin(theta));
         double y = distance * Math.cos(phi);
         double z = distance * (Math.sin(phi) * Math.cos(theta));
 
-        // обновляем позицию камеры
+        // Обновляем позицию камеры
         position = new Vector3(x, y, z).add(target);
 
         updateCameraVectors();
     }
 
-    /**
-     * Pans camera horizontally and vertically
-     *
-     * @param deltaX horizontal movement delta
-     * @param deltaY vertical movement delta
-     * @param sensitivity pan sensitivity multiplier
-     * @author Dmitriy Uvarov
-     */
+    // Метод для панорамирования (движения камеры с сохранением направления)
     public void pan(double deltaX, double deltaY, double sensitivity) {
-        // правый вектор
+        // Вычисляем правый вектор
         Vector3 right = direction.cross(upVector).normalize();
 
-        // вычисляем истинный up вектор
+        // Вычисляем истинный up вектор (перпендикулярный направлению и правому вектору)
         Vector3 realUp = right.cross(direction).normalize();
 
-        // двигаем камеру и цель
-        Vector3 translation = right.mul(deltaX * sensitivity)
+        // Двигаем камеру и цель
+        Vector3 translation = right.mul(-deltaX * sensitivity)
                 .add(realUp.mul(deltaY * sensitivity));
 
         position = position.add(translation);
@@ -110,22 +92,15 @@ public class Camera {
         updateCameraVectors();
     }
 
-    /**
-     * Zooms camera in/out by changing distance to target
-     *
-     * @param delta movement delta
-     * @param sensitivity zoom sensitivity
-     * @author Dmitriy Uvarov
-     */
     public void zoom(double delta, double sensitivity) {
-        // вектор от камеры к цели
+        // Вектор от камеры к цели
         Vector3 toTarget = target.sub(position);
         double distance = toTarget.length();
 
-        // изменяем расстояние
-        double newDistance = Math.max(0.1, distance - delta * sensitivity);
+        // Изменяем расстояние с ограничением
+        double newDistance = Math.max(0.1f, distance - delta * sensitivity);
 
-        // новая позиция камеры
+        // Новая позиция камеры
         Vector3 newPosition = target.sub(toTarget.normalize().mul(newDistance));
 
         position = newPosition;
@@ -133,12 +108,7 @@ public class Camera {
         updateCameraVectors();
     }
 
-    /**
-     * Moves camera forward or backward along its view direction
-     *
-     * @param amount movement amount (positive for forward, negative for backward)
-     * @author Dmitriy Uvarov
-     */
+    // Дополнительный метод для движения вперед/назад по направлению взгляда
     public void moveForwardBackward(double amount) {
         Vector3 forward = direction.normalize().mul(amount);
         position = position.add(forward);
@@ -146,12 +116,7 @@ public class Camera {
         updateCameraVectors();
     }
 
-    /**
-     * Moves camera left or right relative to its view direction
-     *
-     * @param amount movement amount (positive for right, negative for left)
-     * @author Dmitriy Uvarov
-     */
+    // Метод для движения вправо/влево
     public void moveRightLeft(double amount) {
         Vector3 right = direction.cross(upVector).normalize().mul(amount);
         position = position.add(right);
@@ -159,12 +124,7 @@ public class Camera {
         updateCameraVectors();
     }
 
-    /**
-     * Moves camera up or down in world space
-     *
-     * @param amount movement amount (positive for up, negative for down)
-     * @author Dmitriy Uvarov
-     */
+    // Метод для движения вверх/вниз
     public void moveUpDown(double amount) {
         Vector3 up = upVector.mul(amount);
         position = position.add(up);
@@ -174,6 +134,14 @@ public class Camera {
 
     public void setPosition(final Vector3 position) {
         this.position = position;
+    }
+
+    public double getFov() {
+        return fov;
+    }
+
+    public void setFov(double fov) {
+        this.fov = fov;
     }
 
     public void setTarget(final Vector3 target) {
@@ -190,6 +158,14 @@ public class Camera {
 
     public Vector3 getTarget() {
         return target;
+    }
+
+    public void movePosition(final Vector3 translation) {
+        this.position = this.position.add(translation);
+    }
+
+    public void moveTarget(final Vector3 translation) {
+        this.target = this.target.add(translation);
     }
 
     public Matrix4 getViewMatrix() {
