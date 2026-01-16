@@ -24,8 +24,6 @@ import ru.vsu.cs.finaltaskcg.render_engine.Camera;
 import ru.vsu.cs.finaltaskcg.render_engine.RenderEngine;
 import ru.vsu.cs.finaltaskcg.triangulation.FanTriangulator;
 import ru.vsu.cs.finaltaskcg.triangulation.Triangulator;
-import ru.vsu.cs.finaltaskcg.lighting.LightCalculator;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,7 +79,7 @@ public class GuiController {
     private Camera camera = new Camera(
             new Vector3(0, 0, 100),
             new Vector3(0, 0, 0),
-            1.0F, 1, 0.1F, 100);
+            1.0F, 1, 0.1F, 1000);
 
     private Timeline timeline;
 

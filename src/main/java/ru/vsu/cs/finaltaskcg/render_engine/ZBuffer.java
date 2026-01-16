@@ -26,7 +26,7 @@ public class ZBuffer {
         }
 
         // Z-буфер: чем МЕНЬШЕ z, тем БЛИЖЕ объект
-        if (z < buffer[y][x] && z >= 0) {
+        if (z >= -1.0 && z <= 1.0 && z < buffer[y][x]) {
             buffer[y][x] = z;
             return true;
         }

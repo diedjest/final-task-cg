@@ -596,24 +596,26 @@ public class RenderEngine {
 
                     double z = w0 * vertices[0].getZ() + w1 * vertices[1].getZ() + w2 * vertices[2].getZ();
 
-                    if (zBuffer.testAndSet(x, y, z)) {
-                        // ИНТЕРПОЛЯЦИЯ ТЕКСТУРНЫХ КООРДИНАТ!
-                        Color pixelColor;
-                        if (useTexture && textureLoader.isLoaded() && textureCoords != null) {
-                            // Интерполируем UV-координаты
-                            double u = w0 * textureCoords[0].getX() +
-                                    w1 * textureCoords[1].getX() +
-                                    w2 * textureCoords[2].getX();
-                            double v = w0 * textureCoords[0].getY() +
-                                    w1 * textureCoords[1].getY() +
-                                    w2 * textureCoords[2].getY();
-                            pixelColor = textureLoader.getColor(u, v);
-                        } else {
-                            pixelColor = baseColor;
-                        }
+                    if (z >= -1.0 && z <= 1.0) {
+                        if (zBuffer.testAndSet(x, y, z)) {
+                            // ИНТЕРПОЛЯЦИЯ ТЕКСТУРНЫХ КООРДИНАТ!
+                            Color pixelColor;
+                            if (useTexture && textureLoader.isLoaded() && textureCoords != null) {
+                                // Интерполируем UV-координаты
+                                double u = w0 * textureCoords[0].getX() +
+                                        w1 * textureCoords[1].getX() +
+                                        w2 * textureCoords[2].getX();
+                                double v = w0 * textureCoords[0].getY() +
+                                        w1 * textureCoords[1].getY() +
+                                        w2 * textureCoords[2].getY();
+                                pixelColor = textureLoader.getColor(u, v);
+                            } else {
+                                pixelColor = baseColor;
+                            }
 
-                        pixelWriter.setColor(x, y, pixelColor);
-                        pixelsRendered++;
+                            pixelWriter.setColor(x, y, pixelColor);
+                            pixelsRendered++;
+                        }
                     }
                 }
             }
