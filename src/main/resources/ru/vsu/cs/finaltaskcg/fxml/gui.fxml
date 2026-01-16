@@ -46,7 +46,7 @@
                 <CheckBox fx:id="wireframeCheckBox" text="Каркас" selected="true" />
                 <CheckBox fx:id="fillCheckBox" text="Заливка" selected="true" />
                 <CheckBox fx:id="lightingCheckBox" text="Освещение" selected="true" />
-                <CheckBox fx:id="zbufferCheckBox" text="Z-Буфер" />
+                <CheckBox fx:id="zbufferCheckBox" text="Применить текстуру" />
                 <CheckBox fx:id="triangulationCheckBox" text="Триангуляция" />
                 <CheckBox fx:id="smoothShadingCheckBox" text="Плавные тени" />
                 <CheckBox fx:id="specularCheckBox" text="Блики" />

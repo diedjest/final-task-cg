@@ -118,12 +118,12 @@ public class ApplicationController {
 
     private void setupCamera() {
         camera = new Camera(
-                new Vector3(0, 0, 1000),
+                new Vector3(0, 0, 100),
                 new Vector3(0, 0, 0),
                 1.0F,
                 1.0,
                 0.1F,
-                10000.0f
+                1000.0f
         );
     }
 
@@ -1067,7 +1067,7 @@ public class ApplicationController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("О программе");
         alert.setHeaderText("3D Model Viewer Pro");
-        alert.setContentText("Версия 2.0\nСовременный просмотрщик 3D моделей\n\nФункции:\n• Загрузка/сохранение OBJ моделей\n• Преобразования (перемещение, вращение, масштаб)\n• Удаление вершин и полигонов\n• Темная/светлая тема\n• Современный интерфейс\n• Триангуляция\n• Освещение\n• Z-буфер\n• Текстурирование\n\nРазработано командой");
+        alert.setContentText("Версия 2.0\nСовременный просмотрщик 3D моделей\n\nФункции:\n• Загрузка/сохранение OBJ моделей\n• Преобразования (перемещение, вращение, масштаб)\n• Удаление вершин и полигонов\n• Темная/светлая тема\n• Современный интерфейс\n• Триангуляция\n• Освещение\n• Примение екстур\n• Текстурирование\n\nРазработано командой");
         alert.showAndWait();
     }
 
