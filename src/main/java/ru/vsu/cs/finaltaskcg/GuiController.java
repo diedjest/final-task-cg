@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class GuiController {
 
-    final private double TRANSLATION = 10.0;
+    final private double TRANSLATION = 50.0;
 
     @FXML
     AnchorPane anchorPane;
@@ -203,16 +203,13 @@ public class GuiController {
     }
 
     private void setupMouseHandlers() {
-        // Обработка нажатия мыши
         anchorPane.setOnMousePressed(event -> {
             if (event.isPrimaryButtonDown()) {
-                // Левая кнопка мыши - панорамирование (движение камеры)
                 isMousePressed = true;
                 lastMouseX = event.getX();
                 lastMouseY = event.getY();
                 event.consume();
             } else if (event.isMiddleButtonDown()) {
-                // Средняя кнопка мыши - вращение
                 isMiddleMousePressed = true;
                 lastMouseX = event.getX();
                 lastMouseY = event.getY();
@@ -220,17 +217,14 @@ public class GuiController {
             }
         });
 
-        // Обработка перетаскивания мыши
         anchorPane.setOnMouseDragged(event -> {
             if (isMousePressed && !isMiddleMousePressed) {
-                // Панорамирование левой кнопкой мыши
                 double deltaX = event.getX() - lastMouseX;
                 double deltaY = event.getY() - lastMouseY;
 
                 Camera cam = cameras.get(activeCameraIndex);
                 cam.pan(deltaX, deltaY, PAN_SENSITIVITY);
 
-                // Обновляем позицию света, если освещение включено
                 if (lightingMenuItem.isSelected()) {
                     RenderEngine.setLightPosition(cam.getPosition());
                 }
@@ -241,14 +235,12 @@ public class GuiController {
                 event.consume();
 
             } else if (isMiddleMousePressed) {
-                // Вращение средней кнопкой мыши
                 double deltaX = event.getX() - lastMouseX;
                 double deltaY = event.getY() - lastMouseY;
 
                 Camera cam = cameras.get(activeCameraIndex);
-                cam.rotateAroundTarget((float)deltaX, (float)deltaY, ROTATION_SENSITIVITY);
+                cam.rotateAroundTarget(deltaX, deltaY, ROTATION_SENSITIVITY);
 
-                // Обновляем позицию света, если освещение включено
                 if (lightingMenuItem.isSelected()) {
                     RenderEngine.setLightPosition(cam.getPosition());
                 }
@@ -260,20 +252,16 @@ public class GuiController {
             }
         });
 
-        // Обработка отпускания кнопок мыши
         anchorPane.setOnMouseReleased(event -> {
             isMousePressed = false;
             isMiddleMousePressed = false;
         });
 
-        // Обработка колесика мыши
         anchorPane.setOnScroll(event -> {
             Camera cam = cameras.get(activeCameraIndex);
 
-            // Zoom колесиком мыши
             cam.zoom((float)event.getDeltaY(), ZOOM_SENSITIVITY);
 
-            // Обновляем позицию света, если освещение включено
             if (lightingMenuItem.isSelected()) {
                 RenderEngine.setLightPosition(cam.getPosition());
             }
@@ -282,7 +270,6 @@ public class GuiController {
             event.consume();
         });
 
-        // Убираем выделение текста при перетаскивании
         anchorPane.setOnDragDetected(event -> anchorPane.startFullDrag());
     }
 
@@ -549,13 +536,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveForwardBackward(-TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вперед");
     }
 
     @FXML
@@ -563,13 +548,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveForwardBackward(TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: назад");
     }
 
     @FXML
@@ -577,13 +560,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveRightLeft(TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: влево");
     }
 
     @FXML
@@ -591,13 +572,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveRightLeft(-TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вправо");
     }
 
     @FXML
@@ -605,13 +584,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveUpDown(TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вверх");
     }
 
     @FXML
@@ -619,42 +596,35 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveUpDown(-TRANSLATION);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вниз");
     }
 
-    // Дополнительные методы для управления камерой (вращение)
     @FXML
     public void handleCameraRotateLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вращение влево");
     }
 
     @FXML
     public void handleCameraRotateRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
+        cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вращение вправо");
     }
 
     @FXML
@@ -662,13 +632,11 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(0, -5, ROTATION_SENSITIVITY);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вращение вверх");
     }
 
     @FXML
@@ -676,29 +644,24 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(0, 5, ROTATION_SENSITIVITY);
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера: вращение вниз");
     }
 
-    // Метод для сброса камеры
     @FXML
     public void handleCameraReset(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.setPosition(new Vector3(0, 0, 100));
         cam.setTarget(new Vector3(0, 0, 0));
 
-        // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
             RenderEngine.setLightPosition(cam.getPosition());
         }
 
         updateCameraModels();
-        System.out.println("Камера сброшена в начальное положение");
     }
 
     @FXML
