@@ -862,7 +862,7 @@ public class ApplicationController {
         if (activeModel == null) return;
 
         if (type.equals("Перемещение")) {
-            activeModel.affineBuilder.translate(x, y, z);
+            activeModel.affineBuilder.translate(-x, y, z);
             statusLabel.setText("Модель перемещена");
         } else if (type.equals("Вращение")) {
             activeModel.affineBuilder.rotateX(Math.toRadians(x))
