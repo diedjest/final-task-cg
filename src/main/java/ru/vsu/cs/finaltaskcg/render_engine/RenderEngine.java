@@ -55,31 +55,24 @@ public class RenderEngine {
     // Методы управления
     public static void setShowSceneHelpers(boolean show) {
         showSceneHelpers = show;
-        System.out.println("Scene helpers (axes/grid): " + (show ? "ON" : "OFF"));
     }
 
     public static void toggleSceneHelpers() {
         showSceneHelpers = !showSceneHelpers;
-        System.out.println("Scene helpers (axes/grid): " + (showSceneHelpers ? "ON" : "OFF"));
     }
 
     // Методы для управления освещением
     public static void setSmoothShading(boolean enabled) {
         smoothShading = enabled;
-        System.out.println("Smooth shading: " + (enabled ? "ON" : "OFF"));
     }
 
     public static void setSpecularLighting(boolean enabled) {
         useSpecular = enabled;
         LightCalculator.setLightingComponents(true, true, enabled);
-        System.out.println("Specular lighting: " + (enabled ? "ON" : "OFF"));
     }
 
     public static void setLightingParameters(double ambient, double diffuse, double specular, int shininess) {
         LightCalculator.setLightingParameters(ambient, diffuse, specular, shininess);
-        System.out.println("Lighting parameters updated: ambient=" + ambient +
-                ", diffuse=" + diffuse + ", specular=" + specular +
-                ", shininess=" + shininess);
     }
 
     public static void setLightingMode(String mode) {
@@ -89,13 +82,11 @@ public class RenderEngine {
         } else {
             setSmoothShading(false);
         }
-        System.out.println("Lighting mode: " + mode);
     }
 
     // Методы для управления триангуляцией
     public static void setAutoTriangulate(boolean enable) {
         autoTriangulate = enable;
-        System.out.println("Auto-triangulation: " + (enable ? "ON" : "OFF"));
     }
 
     public static void setTriangulator(Triangulator triangulator) {
@@ -115,9 +106,6 @@ public class RenderEngine {
         useLighting = lighting;
         useZBuffer = zBufferMode;
 
-        System.out.println("Render mode set: Wireframe=" + wireframe +
-                ", Fill=" + fill + ", Texture=" + texture +
-                ", Lighting=" + lighting + ", ZBuffer=" + zBufferMode);
     }
 
     public static void setFillColor(Color color) {
@@ -126,10 +114,6 @@ public class RenderEngine {
 
     public static void setLightPosition(Vector3 position) {
         lightPosition = position;
-        System.out.println("Light position updated: " +
-                "(" + position.getX() + ", " +
-                position.getY() + ", " +
-                position.getZ() + ")");
     }
 
     public static boolean loadTexture(String filePath) {
@@ -177,14 +161,12 @@ public class RenderEngine {
 
         // Проверка входных данных
         if (mesh == null || mesh.vertices.isEmpty() || mesh.polygons.isEmpty()) {
-            System.out.println("RenderEngine: Mesh is empty");
             return;
         }
 
         // Автоматическая триангуляция, если включена и модель нуждается в ней
         Model renderModel = mesh;
         if (autoTriangulate && triangulator.needsTriangulation(mesh)) {
-            System.out.println("RenderEngine: Auto-triangulating model");
             renderModel = triangulator.createTriangulatedModel(mesh);
         }
 
@@ -297,12 +279,32 @@ public class RenderEngine {
             return;
         }
 
+        Vector2[] textureCoords = null;
+        if (useTexture && textureLoader.isLoaded() &&
+                !polygon.getTextureVertexIndices().isEmpty()) {
+
+            textureCoords = new Vector2[3];
+            ArrayList<Integer> texIndices = polygon.getTextureVertexIndices();
+
+            for (int i = 0; i < 3; i++) {
+                if (texIndices.get(i) >= 0 && texIndices.get(i) < mesh.textureVertices.size()) {
+                    textureCoords[i] = mesh.textureVertices.get(texIndices.get(i));
+                } else {
+                    textureCoords = null; // Если что-то не так, отключаем текстурирование
+                    break;
+                }
+            }
+        }
+
+        Color triangleColor = getTriangleColor(polygon, mesh, worldVertices);
+
         // Заливка треугольника (если включена)
         if (fillTriangles) {
-            Color triangleColor = getTriangleColor(polygon, mesh, worldVertices);
-
             if (useZBuffer) {
-                fillTriangleZBuffer(graphicsContext, vertices, screenPoints, triangleColor);
+                // Передаем textureCoords
+                fillTriangleZBuffer(graphicsContext, vertices, screenPoints,
+                        textureCoords, triangleColor, polygon, mesh,
+                        width, height);
             } else {
                 fillTriangleSimple(graphicsContext, screenPoints, triangleColor);
             }
@@ -416,19 +418,24 @@ public class RenderEngine {
 
     private static Color getTextureColor(Polygon polygon, Model mesh) {
         try {
-            // Простая реализация: берем цвет из первой текстуры вершины
-            if (!polygon.getTextureVertexIndices().isEmpty()) {
-                int texIndex = polygon.getTextureVertexIndices().get(0);
-                if (texIndex >= 0 && texIndex < mesh.textureVertices.size()) {
-                    Vector2 texCoord = mesh.textureVertices.get(texIndex);
-                    return textureLoader.getColor(texCoord.getX(), texCoord.getY());
-                }
+            // Проверяем наличие текстурных координат
+            if (polygon.getTextureVertexIndices().isEmpty()) {
+                return fillColor;
+            }
+
+            // Берем текстурные координаты из СРЕДНЕЙ точки треугольника
+            // (Позже нужно будет интерполировать для каждого пикселя)
+            int texIndex = polygon.getTextureVertexIndices().get(0);
+            if (texIndex >= 0 && texIndex < mesh.textureVertices.size()) {
+                Vector2 texCoord = mesh.textureVertices.get(texIndex);
+                return textureLoader.getColor(texCoord.getX(), texCoord.getY());
+            } else {
+                return fillColor;
             }
         } catch (Exception e) {
-            System.err.println("Error getting texture color: " + e.getMessage());
+            e.printStackTrace();
+            return fillColor;
         }
-
-        return fillColor;
     }
 
     private static Color applyLighting(Polygon polygon, Model mesh,
@@ -443,7 +450,6 @@ public class RenderEngine {
             }
 
         } catch (Exception e) {
-            System.err.println("Error applying lighting: " + e.getMessage());
             // Возвращаем цвет с минимальной освещенностью
             return new Color(
                     Math.min(baseColor.getRed() * 0.3, 1.0),
@@ -513,7 +519,6 @@ public class RenderEngine {
             }
 
         } catch (Exception e) {
-            System.err.println("Error applying smooth lighting: " + e.getMessage());
         }
 
         // В случае ошибки используем плоское затенение
@@ -536,7 +541,11 @@ public class RenderEngine {
     private static void fillTriangleZBuffer(GraphicsContext gc,
                                             Vector3[] vertices,
                                             Vector2[] screenPoints,
-                                            Color color) {
+                                            Vector2[] textureCoords,  // ← ДОБАВЬТЕ ЭТОТ ПАРАМЕТР
+                                            Color baseColor,
+                                            Polygon polygon,
+                                            Model mesh,
+                                            int width, int height) {
 
         // Предварительная проверка: все ли вершины находятся перед камерой?
         // В NDC видимые точки имеют z в [-1, 1], но обычно видимые z < 1
@@ -574,35 +583,37 @@ public class RenderEngine {
         PixelWriter pixelWriter = gc.getPixelWriter();
         double invArea = 1.0 / area;
 
-        // Проходим по всем пикселям в ограничивающем прямоугольнике
         for (int y = (int)minY; y <= maxY; y++) {
             for (int x = (int)minX; x <= maxX; x++) {
-                // Вычисляем барицентрические координаты
                 double w0 = edgeFunction(screenPoints[1], screenPoints[2], x, y);
                 double w1 = edgeFunction(screenPoints[2], screenPoints[0], x, y);
                 double w2 = edgeFunction(screenPoints[0], screenPoints[1], x, y);
 
-                // Если точка внутри треугольника (с учетом ориентации)
                 if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
-                    // Нормализуем барицентрические координаты
-                    w0 *= invArea;
-                    w1 *= invArea;
-                    w2 *= invArea;
+                    w0 /= area;
+                    w1 /= area;
+                    w2 /= area;
 
-                    // Интерполируем Z-координату
                     double z = w0 * vertices[0].getZ() + w1 * vertices[1].getZ() + w2 * vertices[2].getZ();
 
-                    // В Z-буфере храним значения в диапазоне [0, 1] или [-1, 1]
-                    // Нормализуем z к диапазону [0, 1] для сравнения
-                    double zNormalized = (z + 1.0) * 0.5; // из [-1, 1] в [0, 1]
-
-                    // Проверяем, находится ли точка перед камерой
-                    if (zNormalized >= 0 && zNormalized <= 1) {
-                        // Проверяем Z-буфер
-                        if (zBuffer.testAndSet(x, y, zNormalized)) {
-                            pixelWriter.setColor(x, y, color);
-                            pixelsRendered++;
+                    if (zBuffer.testAndSet(x, y, z)) {
+                        // ИНТЕРПОЛЯЦИЯ ТЕКСТУРНЫХ КООРДИНАТ!
+                        Color pixelColor;
+                        if (useTexture && textureLoader.isLoaded() && textureCoords != null) {
+                            // Интерполируем UV-координаты
+                            double u = w0 * textureCoords[0].getX() +
+                                    w1 * textureCoords[1].getX() +
+                                    w2 * textureCoords[2].getX();
+                            double v = w0 * textureCoords[0].getY() +
+                                    w1 * textureCoords[1].getY() +
+                                    w2 * textureCoords[2].getY();
+                            pixelColor = textureLoader.getColor(u, v);
+                        } else {
+                            pixelColor = baseColor;
                         }
+
+                        pixelWriter.setColor(x, y, pixelColor);
+                        pixelsRendered++;
                     }
                 }
             }
