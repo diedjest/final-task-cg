@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.vsu.cs.finaltaskcg.ui.ApplicationController">
+
+    <top>
+        <MenuBar>
+            <Menu text="Файл">
+                <MenuItem fx:id="openMenuItem" text="Открыть модель" />
+                <MenuItem fx:id="openTextureMenuItem" text="Загрузить текстуру" />
+                <MenuItem fx:id="saveMenuItem" text="Сохранить модель" />
+                <SeparatorMenuItem />
+                <MenuItem text="Выход" onAction="#handleExit" />
+            </Menu>
+            <Menu text="Вид">
+                <MenuItem fx:id="lightThemeMenuItem" text="Светлая тема" />
+                <MenuItem fx:id="darkThemeMenuItem" text="Темная тема" />
+                <SeparatorMenuItem />
+                <CheckMenuItem fx:id="textureMenuItem" text="Текстура" />
+            </Menu>
+            <Menu text="Справка">
+                <MenuItem fx:id="aboutMenuItem" text="О программе" />
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.2, 0.7">
+            <VBox fx:id="leftPanel" spacing="10">
+                <Label text="Модели на сцене:" />
+                <ListView fx:id="modelListView" VBox.vgrow="ALWAYS" />
+                <Button fx:id="addModelButton" text="Добавить модель" />
+                <Button fx:id="removeModelButton" text="Удалить модель" />
+                <Button fx:id="quickDeleteButton" text="Удалить элементы" />
+                <Button fx:id="selectAllButton" text="Выбрать все" />
+                <Button fx:id="clearSelectionButton" text="Сбросить" />
+                <Button fx:id="importButton" text="Импорт" />
+                <Separator />
+                <Label text="Рендеринг:" />
+                <CheckBox fx:id="wireframeCheckBox" text="Каркас" selected="true" />
+                <CheckBox fx:id="fillCheckBox" text="Заливка" selected="true" />
+                <CheckBox fx:id="lightingCheckBox" text="Освещение" selected="true" />
+                <CheckBox fx:id="zbufferCheckBox" text="Z-Буфер" />
+            </VBox>
+
+            <VBox fx:id="canvasContainer" spacing="10">
+                <Canvas fx:id="canvas" width="800" height="600" VBox.vgrow="ALWAYS" />
+                <HBox spacing="10">
+                    <Button fx:id="moveButton" text="Перемещение" />
+                    <Button fx:id="rotateButton" text="Вращение" />
+                    <Button fx:id="scaleButton" text="Масштабирование" />
+                    <Button fx:id="deleteButton" text="Удалить часть" />
+                    <Button fx:id="resetButton" text="Сброс" />
+                    <Separator orientation="VERTICAL" />
+                    <Button fx:id="rotateLeftButton" text="↶ Влево" />
+                    <Button fx:id="rotateRightButton" text="Вправо ↷" />
+                    <Button fx:id="zoomInButton" text="+ Приблизить" />
+                    <Button fx:id="zoomOutButton" text="- Отдалить" />
+                    <Button fx:id="resetCameraButton" text="⟲ Камера" />
+                </HBox>
+                <Label fx:id="statusLabel" text="Готов к работе" />
+            </VBox>
+
+            <VBox fx:id="rightPanel" spacing="10">
+                <Label text="Свойства модели:" />
+                <TextField fx:id="modelNameField" promptText="Название модели" />
+                <Label fx:id="vertexCountLabel" text="Вершин: 0" />
+                <Label fx:id="polygonCountLabel" text="Полигонов: 0" />
+                <ColorPicker fx:id="modelColorPicker" />
+                <Button fx:id="exportButton" text="Экспорт" />
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>
