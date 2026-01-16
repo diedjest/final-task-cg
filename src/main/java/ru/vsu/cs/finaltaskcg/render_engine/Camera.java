@@ -39,7 +39,7 @@ public class Camera {
         Vector3 cameraToTarget = position.sub(target);
 
         // yaw
-        double horizontalAngle = (-deltaX * sensitivity * Math.PI / 180.0);
+        double horizontalAngle = (deltaX * sensitivity * Math.PI / 180.0);
 
         // pitch
         double verticalAngle = (-deltaY * sensitivity * Math.PI / 180.0);
