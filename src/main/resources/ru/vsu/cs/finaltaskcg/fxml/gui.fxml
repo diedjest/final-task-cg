@@ -25,6 +25,12 @@
                            onAction="#onLightingModeChanged"/>
             <CheckMenuItem fx:id="zBufferMenuItem" text="Use Z-Buffer" selected="false"
                            onAction="#onZBufferModeChanged"/>
+            <CheckMenuItem fx:id="triangulationMenuItem" text="Auto Triangulation" selected="true"
+                           onAction="#onTriangulationModeChanged"/>
+            <CheckMenuItem fx:id="smoothShadingMenuItem" text="Smooth Shading" selected="false"
+                           onAction="#onSmoothShadingModeChanged"/>
+            <CheckMenuItem fx:id="specularMenuItem" text="Specular Lighting" selected="false"
+                           onAction="#onSpecularModeChanged"/>
         </Menu>
         <Menu text="Camera">
             <MenuItem text="Add Camera" onAction="#onAddCamera"/>

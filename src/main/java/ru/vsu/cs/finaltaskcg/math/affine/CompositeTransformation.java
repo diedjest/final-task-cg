@@ -26,7 +26,6 @@ public class CompositeTransformation implements Transformation {
         Matrix4 result = Matrix4.identity();
 
         for (Transformation transformation : transformations) {
-            // Умножаем матрицы: result = transformation.getMatrix() × result
             result = transformation.getMatrix().mul(result);
         }
 
@@ -39,6 +38,6 @@ public class CompositeTransformation implements Transformation {
         if (isDirty) {
             updateCachedMatrix();
         }
-        return cachedMatrix; // Возвращаем копию
+        return cachedMatrix;
     }
 }
