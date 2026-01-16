@@ -146,6 +146,7 @@ public class RenderEngine {
             final GraphicsContext graphicsContext,
             final Camera camera,
             final Model mesh,
+            // dont touch
             TransformManager transformManager,
             final int width,
             final int height) {
@@ -181,6 +182,7 @@ public class RenderEngine {
         }
 
         // Получаем матрицы преобразования
+        // dont touch
         Matrix4 modelMatrix = transformManager.getTransformationMatrix(mesh);
         Matrix4 viewMatrix = camera.getViewMatrix();
         Matrix4 projectionMatrix = camera.getProjectionMatrix();
