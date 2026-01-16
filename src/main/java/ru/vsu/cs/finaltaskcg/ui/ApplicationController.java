@@ -90,7 +90,7 @@ public class ApplicationController {
     private double lastMouseX = 0;
     private double lastMouseY = 0;
     private final double MOUSE_SENSITIVITY = 0.2;
-    private final double PAN_SENSITIVITY = 0.001;
+    private final double PAN_SENSITIVITY = 0.05;
     private final double ZOOM_SENSITIVITY = 0.05;
     private final double ROTATION_SENSITIVITY = 0.1;
 
