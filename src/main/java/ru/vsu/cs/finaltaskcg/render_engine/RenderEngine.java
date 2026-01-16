@@ -146,7 +146,6 @@ public class RenderEngine {
             final GraphicsContext graphicsContext,
             final Camera camera,
             final Model mesh,
-            // dont touch
             TransformManager transformManager,
             final int width,
             final int height) {
@@ -182,8 +181,7 @@ public class RenderEngine {
         }
 
         // Получаем матрицы преобразования
-        // dont touch
-        Matrix4 modelMatrix = transformManager.getTransformationMatrix(mesh);
+        Matrix4 modelMatrix = GraphicConveyor.rotateScaleTranslate();
         Matrix4 viewMatrix = camera.getViewMatrix();
         Matrix4 projectionMatrix = camera.getProjectionMatrix();
 
@@ -406,18 +404,70 @@ public class RenderEngine {
 
     private static Color getTriangleColor(Polygon polygon, Model mesh, Vector3[] worldVertices) {
         Color color = fillColor;
+        boolean hasTexture = false;
+        Color textureColor = null;
 
         // Если есть текстура и она загружена
         if (useTexture && textureLoader.isLoaded() && !polygon.getTextureVertexIndices().isEmpty()) {
-            color = getTextureColor(polygon, mesh);
+            hasTexture = true;
+            // Берем средний цвет текстуры для треугольника (позже интерполируем)
+            textureColor = getAverageTextureColor(polygon, mesh);
         }
 
         // Если включено освещение
         if (useLighting) {
-            color = applyLighting(polygon, mesh, worldVertices, color);
+            if (hasTexture) {
+                // Применяем освещение к белому цвету, затем умножаем на текстуру
+                Color lighting = applyLighting(polygon, mesh, worldVertices, Color.WHITE);
+                color = multiplyColors(textureColor, lighting);
+            } else {
+                color = applyLighting(polygon, mesh, worldVertices, color);
+            }
+        } else if (hasTexture) {
+            color = textureColor;
         }
 
         return color;
+    }
+
+    // Новый метод для усреднения цвета текстуры
+    private static Color getAverageTextureColor(Polygon polygon, Model mesh) {
+        try {
+            if (polygon.getTextureVertexIndices().isEmpty()) {
+                return fillColor;
+            }
+
+            double totalR = 0, totalG = 0, totalB = 0;
+            int count = 0;
+
+            for (Integer texIndex : polygon.getTextureVertexIndices()) {
+                if (texIndex >= 0 && texIndex < mesh.textureVertices.size()) {
+                    Vector2 texCoord = mesh.textureVertices.get(texIndex);
+                    Color texColor = textureLoader.getColor(texCoord.getX(), texCoord.getY());
+                    totalR += texColor.getRed();
+                    totalG += texColor.getGreen();
+                    totalB += texColor.getBlue();
+                    count++;
+                }
+            }
+
+            if (count > 0) {
+                return new Color(totalR / count, totalG / count, totalB / count, 1.0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fillColor;
+    }
+
+    // Метод для умножения цветов (текстура × освещение)
+    private static Color multiplyColors(Color color1, Color color2) {
+        return new Color(
+                Math.min(color1.getRed() * color2.getRed(), 1.0),
+                Math.min(color1.getGreen() * color2.getGreen(), 1.0),
+                Math.min(color1.getBlue() * color2.getBlue(), 1.0),
+                Math.min(color1.getOpacity(), color2.getOpacity())
+        );
     }
 
     private static Color getTextureColor(Polygon polygon, Model mesh) {
@@ -600,24 +650,26 @@ public class RenderEngine {
 
                     double z = w0 * vertices[0].getZ() + w1 * vertices[1].getZ() + w2 * vertices[2].getZ();
 
-                    if (zBuffer.testAndSet(x, y, z)) {
-                        // ИНТЕРПОЛЯЦИЯ ТЕКСТУРНЫХ КООРДИНАТ!
-                        Color pixelColor;
-                        if (useTexture && textureLoader.isLoaded() && textureCoords != null) {
-                            // Интерполируем UV-координаты
-                            double u = w0 * textureCoords[0].getX() +
-                                    w1 * textureCoords[1].getX() +
-                                    w2 * textureCoords[2].getX();
-                            double v = w0 * textureCoords[0].getY() +
-                                    w1 * textureCoords[1].getY() +
-                                    w2 * textureCoords[2].getY();
-                            pixelColor = textureLoader.getColor(u, v);
-                        } else {
-                            pixelColor = baseColor;
-                        }
+                    if (z >= -1.0 && z <= 1.0) {
+                        if (zBuffer.testAndSet(x, y, z)) {
+                            // ИНТЕРПОЛЯЦИЯ ТЕКСТУРНЫХ КООРДИНАТ!
+                            Color pixelColor;
+                            if (useTexture && textureLoader.isLoaded() && textureCoords != null) {
+                                // Интерполируем UV-координаты
+                                double u = w0 * textureCoords[0].getX() +
+                                        w1 * textureCoords[1].getX() +
+                                        w2 * textureCoords[2].getX();
+                                double v = w0 * textureCoords[0].getY() +
+                                        w1 * textureCoords[1].getY() +
+                                        w2 * textureCoords[2].getY();
+                                pixelColor = textureLoader.getColor(u, v);
+                            } else {
+                                pixelColor = baseColor;
+                            }
 
-                        pixelWriter.setColor(x, y, pixelColor);
-                        pixelsRendered++;
+                            pixelWriter.setColor(x, y, pixelColor);
+                            pixelsRendered++;
+                        }
                     }
                 }
             }

@@ -128,15 +128,17 @@ public class LightCalculator {
 
             normal = normal.normalize();
 
-            // Проверяем направление нормали (должна быть в сторону камеры)
+            // Центр треугольника
             Vector3 center = new Vector3(
                     (v0.getX() + v1.getX() + v2.getX()) / 3.0,
                     (v0.getY() + v1.getY() + v2.getY()) / 3.0,
                     (v0.getZ() + v1.getZ() + v2.getZ()) / 3.0
             );
 
+            // Вектор от центра к камере
             Vector3 viewDir = cameraPosition.sub(center).normalize();
 
+            // Проверяем направление нормали относительно камеры
             // Если нормаль направлена от камеры, переворачиваем ее
             if (normal.dot(viewDir) < 0) {
                 normal = normal.mul(-1);
@@ -146,7 +148,13 @@ public class LightCalculator {
 
         } catch (Exception e) {
             System.err.println("Error in LightCalculator (triangle): " + e.getMessage());
-            return baseColor;
+            // Возвращаем базовый цвет с минимальной освещенностью
+            return new Color(
+                    Math.min(baseColor.getRed() * 0.3, 1.0),
+                    Math.min(baseColor.getGreen() * 0.3, 1.0),
+                    Math.min(baseColor.getBlue() * 0.3, 1.0),
+                    baseColor.getOpacity()
+            );
         }
     }
 
@@ -161,6 +169,7 @@ public class LightCalculator {
     /**
      * Упрощенный расчет освещения (только ambient и diffuse)
      */
+    // Упрощенный метод для плавного затенения
     public static Color calculateSimpleLight(
             Vector3 vertex,
             Vector3 normal,
@@ -172,18 +181,17 @@ public class LightCalculator {
             Vector3 norm = normal.normalize();
             Vector3 lightDir = lightPosition.sub(vertex).normalize();
 
-            // Проверяем направление нормали
-            double dot = norm.dot(lightDir);
-            if (dot < 0) {
-                norm = norm.mul(-1);
-                dot = -dot;
-            }
+            // Diffuse компонента
+            double diff = Math.max(norm.dot(lightDir), 0.0);
 
-            double diff = Math.max(dot, 0.0);
+            // Ambient компонента
             double ambient = ambientStrength;
 
+            // Итоговая интенсивность
             double intensity = ambient + (diff * diffuseStrength);
-            intensity = Math.max(0.1, Math.min(1.0, intensity)); // Минимум 0.1, чтобы не было черного
+
+            // Гарантируем минимальную видимость
+            intensity = Math.max(0.2, Math.min(1.0, intensity));
 
             return new Color(
                     Math.min(baseColor.getRed() * intensity, 1.0),
@@ -194,7 +202,6 @@ public class LightCalculator {
 
         } catch (Exception e) {
             System.err.println("Error in LightCalculator (simple): " + e.getMessage());
-            // Возвращаем цвет с базовой освещенностью
             return new Color(
                     Math.min(baseColor.getRed() * 0.3, 1.0),
                     Math.min(baseColor.getGreen() * 0.3, 1.0),
