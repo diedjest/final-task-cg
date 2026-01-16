@@ -15,7 +15,7 @@ public class Model {
     public ArrayList<Vector3> normals = new ArrayList<>();
     public ArrayList<Polygon> polygons = new ArrayList<>();
 
-    private AffineBuilder affineBuilder = new AffineBuilder();
+    public AffineBuilder affineBuilder = new AffineBuilder();
 
     public Matrix4 getTransformationMatrix() {
         return affineBuilder.build().getMatrix();
