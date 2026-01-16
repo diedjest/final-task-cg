@@ -1,100 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
 
-<AnchorPane fx:id="anchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.vsu.cs.finaltaskcg.GuiController">
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.vsu.cs.finaltaskcg.ui.ApplicationController">
 
-    <MenuBar AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-        <Menu text="File">
-            <MenuItem text="Open Model..." onAction="#onOpenModelMenuItemClick"/>
-            <MenuItem text="Load Texture..." onAction="#onOpenTextureMenuItemClick"/>
-            <SeparatorMenuItem/>
-            <MenuItem text="Exit" onAction="#handleExit"/>
-        </Menu>
-        <Menu text="View">
-            <CheckMenuItem fx:id="wireframeMenuItem" text="Draw Wireframe" selected="true"
-                           onAction="#onWireframeModeChanged"/>
-            <CheckMenuItem fx:id="fillMenuItem" text="Fill Triangles" selected="false"
-                           onAction="#onFillModeChanged"/>
-            <CheckMenuItem fx:id="textureMenuItem" text="Use Texture" selected="false"
-                           onAction="#onTextureModeChanged"/>
-            <CheckMenuItem fx:id="lightingMenuItem" text="Use Lighting" selected="false"
-                           onAction="#onLightingModeChanged"/>
-            <CheckMenuItem fx:id="zBufferMenuItem" text="Use Z-Buffer" selected="false"
-                           onAction="#onZBufferModeChanged"/>
-            <CheckMenuItem fx:id="triangulationMenuItem" text="Auto Triangulation" selected="true"
-                           onAction="#onTriangulationModeChanged"/>
-            <CheckMenuItem fx:id="smoothShadingMenuItem" text="Smooth Shading" selected="false"
-                           onAction="#onSmoothShadingModeChanged"/>
-            <CheckMenuItem fx:id="specularMenuItem" text="Specular Lighting" selected="false"
-                           onAction="#onSpecularModeChanged"/>
-        </Menu>
-        <Menu text="Camera">
-            <MenuItem text="Add Camera" onAction="#onAddCamera"/>
-            <MenuItem text="Remove Current Camera" onAction="#onRemoveCamera"/>
-            <MenuItem text="Next Camera" onAction="#onNextCamera"/>
-            <SeparatorMenuItem/>
-            <MenuItem text="Reset Camera" onAction="#handleCameraReset"/>
-        </Menu>
-        <Menu text="Help">
-            <MenuItem text="About" onAction="#handleAbout"/>
-        </Menu>
-    </MenuBar>
+    <top>
+        <MenuBar>
+            <Menu text="Файл">
+                <MenuItem fx:id="openMenuItem" text="Открыть модель" />
+                <MenuItem fx:id="openTextureMenuItem" text="Загрузить текстуру" />
+                <MenuItem fx:id="saveMenuItem" text="Сохранить модель" />
+                <SeparatorMenuItem />
+                <MenuItem text="Выход" onAction="#handleExit" />
+            </Menu>
+            <Menu text="Вид">
+                <MenuItem fx:id="lightThemeMenuItem" text="Светлая тема" />
+                <MenuItem fx:id="darkThemeMenuItem" text="Темная тема" />
+                <SeparatorMenuItem />
+                <CheckMenuItem fx:id="textureMenuItem" text="Текстура" />
+            </Menu>
+            <Menu text="Справка">
+                <MenuItem fx:id="aboutMenuItem" text="О программе" />
+            </Menu>
+        </MenuBar>
+    </top>
 
-    <Canvas fx:id="canvas" AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="0"
-            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="250"/>
-
-    <VBox spacing="10" AnchorPane.topAnchor="30" AnchorPane.bottomAnchor="0"
-          AnchorPane.rightAnchor="0" style="-fx-background-color: #f0f0f0; -fx-padding: 10;" prefWidth="250">
-        <Label text="Camera Controls" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
-        <Separator/>
-
-        <Label text="Movement:" style="-fx-font-weight: bold;"/>
-        <HBox spacing="5">
-            <Button text="W" onAction="#handleCameraForward" prefWidth="40"/>
-            <VBox spacing="5">
-                <HBox spacing="5">
-                    <Button text="A" onAction="#handleCameraLeft" prefWidth="40"/>
-                    <Button text="S" onAction="#handleCameraBackward" prefWidth="40"/>
-                    <Button text="D" onAction="#handleCameraRight" prefWidth="40"/>
-                </HBox>
-                <HBox spacing="5" alignment="CENTER">
-                    <Button text="Q" onAction="#handleCameraUp" prefWidth="40"/>
-                    <Button text="E" onAction="#handleCameraDown" prefWidth="40"/>
-                </HBox>
+    <center>
+        <SplitPane dividerPositions="0.2, 0.7">
+            <VBox fx:id="leftPanel" spacing="10" style="-fx-padding: 10;">
+                <Label text="Модели на сцене:" />
+                <ListView fx:id="modelListView" VBox.vgrow="ALWAYS" />
+                <Button fx:id="addModelButton" text="Добавить модель" />
+                <Button fx:id="removeModelButton" text="Удалить модель" />
+                <Button fx:id="quickDeleteButton" text="Удалить элементы" />
+                <Button fx:id="selectAllButton" text="Выбрать все" />
+                <Button fx:id="clearSelectionButton" text="Сбросить" />
+                <Button fx:id="importButton" text="Импорт" />
+                <Separator />
+                <Label text="Рендеринг:" />
+                <CheckBox fx:id="wireframeCheckBox" text="Каркас" selected="true" />
+                <CheckBox fx:id="fillCheckBox" text="Заливка" selected="true" />
+                <CheckBox fx:id="lightingCheckBox" text="Освещение" selected="true" />
+                <CheckBox fx:id="zbufferCheckBox" text="Z-Буфер" />
+                <CheckBox fx:id="triangulationCheckBox" text="Триангуляция" />
+                <CheckBox fx:id="smoothShadingCheckBox" text="Плавные тени" />
+                <CheckBox fx:id="specularCheckBox" text="Блики" />
             </VBox>
-        </HBox>
 
-        <Separator/>
-        <Label text="Rotation:" style="-fx-font-weight: bold;"/>
-        <GridPane hgap="5" vgap="5">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="33"/>
-                <ColumnConstraints percentWidth="33"/>
-                <ColumnConstraints percentWidth="33"/>
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints prefHeight="30"/>
-                <RowConstraints prefHeight="30"/>
-                <RowConstraints prefHeight="30"/>
-            </rowConstraints>
+            <VBox fx:id="canvasContainer" spacing="10" style="-fx-padding: 10;">
+                <Canvas fx:id="canvas" width="800" height="600" VBox.vgrow="ALWAYS" />
+                <HBox spacing="10">
+                    <Button fx:id="moveButton" text="Перемещение" />
+                    <Button fx:id="rotateButton" text="Вращение" />
+                    <Button fx:id="scaleButton" text="Масштабирование" />
+                    <Button fx:id="deleteButton" text="Удалить часть" />
+                    <Button fx:id="resetButton" text="Сброс" />
+                    <Separator orientation="VERTICAL" />
+                    <Button fx:id="rotateLeftButton" text="↶ Влево" />
+                    <Button fx:id="rotateRightButton" text="Вправо ↷" />
+                    <Button fx:id="zoomInButton" text="+ Приблизить" />
+                    <Button fx:id="zoomOutButton" text="- Отдалить" />
+                    <Button fx:id="resetCameraButton" text="⟲ Камера" />
+                </HBox>
+                <Label fx:id="statusLabel" text="Готов к работе" />
+            </VBox>
 
-            <Button text="↑" onAction="#handleCameraRotateUp" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-            <Button text="←" onAction="#handleCameraRotateLeft" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-            <Button text="→" onAction="#handleCameraRotateRight" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Button text="↓" onAction="#handleCameraRotateDown" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-        </GridPane>
+            <VBox fx:id="rightPanel" spacing="10" style="-fx-padding: 10;">
+                <Label text="Свойства модели:" />
+                <TextField fx:id="modelNameField" promptText="Название модели" />
+                <Label fx:id="vertexCountLabel" text="Вершин: 0" />
+                <Label fx:id="polygonCountLabel" text="Полигонов: 0" />
+                <ColorPicker fx:id="modelColorPicker" />
+                <Button fx:id="exportButton" text="Экспорт" />
+            </VBox>
+        </SplitPane>
+    </center>
 
-        <Separator/>
-        <Label text="Current Camera:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="cameraLabel" text="Camera 1 of 1" style="-fx-font-size: 12;"/>
-        <Button text="Reset Camera" onAction="#handleCameraReset" maxWidth="Infinity"/>
-
-        <Separator/>
-        <Label text="Fill Color:" style="-fx-font-weight: bold;"/>
-        <ColorPicker fx:id="colorPicker" onAction="#onColorChanged"/>
-    </VBox>
-</AnchorPane>
+</BorderPane>
