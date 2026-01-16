@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class GuiController {
 
-    final private float TRANSLATION = 0.5F;
+    final private double TRANSLATION = 10.0;
 
     @FXML
     AnchorPane anchorPane;
@@ -228,7 +228,7 @@ public class GuiController {
                 double deltaY = event.getY() - lastMouseY;
 
                 Camera cam = cameras.get(activeCameraIndex);
-                cam.pan((float)deltaX, (float)deltaY, PAN_SENSITIVITY);
+                cam.pan(deltaX, deltaY, PAN_SENSITIVITY);
 
                 // Обновляем позицию света, если освещение включено
                 if (lightingMenuItem.isSelected()) {
@@ -547,7 +547,7 @@ public class GuiController {
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveForwardBackward(TRANSLATION);
+        cam.moveForwardBackward(-TRANSLATION);
 
         // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
@@ -561,7 +561,7 @@ public class GuiController {
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveForwardBackward(-TRANSLATION);
+        cam.moveForwardBackward(TRANSLATION);
 
         // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
@@ -603,7 +603,7 @@ public class GuiController {
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveUpDown(-TRANSLATION);
+        cam.moveUpDown(TRANSLATION);
 
         // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
@@ -617,7 +617,7 @@ public class GuiController {
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
-        cam.moveUpDown(TRANSLATION);
+        cam.moveUpDown(-TRANSLATION);
 
         // Обновляем позицию света, если освещение включено
         if (lightingMenuItem.isSelected()) {
