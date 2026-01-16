@@ -1,6 +1,7 @@
 package ru.vsu.cs.finaltaskcg.render_engine;
 
 
+import ru.vsu.cs.finaltaskcg.math.affine.AffineBuilder;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
@@ -9,6 +10,29 @@ public class GraphicConveyor {
 
     public static Matrix4 rotateScaleTranslate() {
         return Matrix4.identity();
+    }
+    public static Matrix4 rotateScaleTranslate(
+            Vector3 translation,
+            Vector3 rotationAngles,
+            Vector3 scale) {
+
+        AffineBuilder builder = new AffineBuilder();
+
+        if (scale != null) {
+            builder.scale(scale.getX(), scale.getY(), scale.getZ());
+        }
+
+        if (rotationAngles != null) {
+            builder.rotateY(rotationAngles.getY())
+                    .rotateX(rotationAngles.getX())
+                    .rotateZ(rotationAngles.getZ());
+        }
+
+        if (translation != null) {
+            builder.translate(translation.getX(), translation.getY(), translation.getZ());
+        }
+
+        return builder.build().getMatrix();
     }
 
     public static Matrix4 lookAt(Vector3 eye, Vector3 target) {

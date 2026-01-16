@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import ru.vsu.cs.finaltaskcg.managers.TransformManager;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 import ru.vsu.cs.finaltaskcg.model.CameraModel;
 import ru.vsu.cs.finaltaskcg.model.Model;
@@ -24,7 +25,6 @@ import ru.vsu.cs.finaltaskcg.render_engine.Camera;
 import ru.vsu.cs.finaltaskcg.render_engine.RenderEngine;
 import ru.vsu.cs.finaltaskcg.triangulation.FanTriangulator;
 import ru.vsu.cs.finaltaskcg.triangulation.Triangulator;
-import ru.vsu.cs.finaltaskcg.lighting.LightCalculator;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +84,8 @@ public class GuiController {
             1.0F, 1, 0.1F, 100);
 
     private Timeline timeline;
+
+    private TransformManager transformManager;
 
     private boolean isMousePressed = false;
     private boolean isMiddleMousePressed = false;
@@ -168,6 +170,7 @@ public class GuiController {
                         canvas.getGraphicsContext2D(),
                         activeCamera,
                         mesh,
+                        transformManager,
                         (int) width,
                         (int) height
                 );

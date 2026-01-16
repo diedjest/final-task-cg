@@ -3,6 +3,7 @@ package ru.vsu.cs.finaltaskcg.render_engine;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+import ru.vsu.cs.finaltaskcg.managers.TransformManager;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
@@ -145,6 +146,7 @@ public class RenderEngine {
             final GraphicsContext graphicsContext,
             final Camera camera,
             final Model mesh,
+            TransformManager transformManager,
             final int width,
             final int height) {
 
@@ -179,7 +181,7 @@ public class RenderEngine {
         }
 
         // Получаем матрицы преобразования
-        Matrix4 modelMatrix = GraphicConveyor.rotateScaleTranslate();
+        Matrix4 modelMatrix = transformManager.getTransformationMatrix(mesh);
         Matrix4 viewMatrix = camera.getViewMatrix();
         Matrix4 projectionMatrix = camera.getProjectionMatrix();
 
