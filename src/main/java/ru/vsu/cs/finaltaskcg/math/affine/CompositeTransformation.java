@@ -6,6 +6,9 @@ import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for composite transformation combines multiply transformations
+ */
 public class CompositeTransformation implements Transformation {
     private final List<Transformation> transformations;
     private Matrix4 cachedMatrix;
@@ -17,11 +20,17 @@ public class CompositeTransformation implements Transformation {
         this.isDirty = false;
     }
 
+    /**
+     * Adds transformation to composition
+     */
     public void add(Transformation transformation) {
         this.transformations.add(transformation);
         this.isDirty = true;
     }
 
+    /**
+     * Recalculates the cached transformation matrix
+     */
     private void updateCachedMatrix() {
         Matrix4 result = Matrix4.identity();
 
@@ -33,6 +42,10 @@ public class CompositeTransformation implements Transformation {
         this.isDirty = false;
     }
 
+    /**
+     * Returns composite transformation matrix
+     * If cache is dirty recal matrix
+     */
     @Override
     public Matrix4 getMatrix() {
         if (isDirty) {

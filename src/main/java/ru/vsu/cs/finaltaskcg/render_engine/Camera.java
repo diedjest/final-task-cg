@@ -31,10 +31,23 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Updates camera direction vector using position and target
+     *
+     * @author Dmitriy Uvarov
+     */
     private void updateCameraVectors() {
         direction = target.sub(position).normalize();
     }
 
+    /**
+     * Rotates camera around the target point using spherical coordinates
+     *
+     * @param deltaX mouse horizontal movement delta
+     * @param deltaY mouse vertical movement delta
+     * @param sensitivity rotation sensitivity
+     * @author Dmitriy Uvarov
+     */
     public void rotateAroundTarget(double deltaX, double deltaY, double sensitivity) {
         Vector3 cameraToTarget = position.sub(target);
 
@@ -72,6 +85,14 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Pans camera horizontally and vertically
+     *
+     * @param deltaX horizontal movement delta
+     * @param deltaY vertical movement delta
+     * @param sensitivity pan sensitivity multiplier
+     * @author Dmitriy Uvarov
+     */
     public void pan(double deltaX, double deltaY, double sensitivity) {
         // правый вектор
         Vector3 right = direction.cross(upVector).normalize();
@@ -89,6 +110,13 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Zooms camera in/out by changing distance to target
+     *
+     * @param delta movement delta
+     * @param sensitivity zoom sensitivity
+     * @author Dmitriy Uvarov
+     */
     public void zoom(double delta, double sensitivity) {
         // вектор от камеры к цели
         Vector3 toTarget = target.sub(position);
@@ -105,6 +133,12 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Moves camera forward or backward along its view direction
+     *
+     * @param amount movement amount (positive for forward, negative for backward)
+     * @author Dmitriy Uvarov
+     */
     public void moveForwardBackward(double amount) {
         Vector3 forward = direction.normalize().mul(amount);
         position = position.add(forward);
@@ -112,6 +146,12 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Moves camera left or right relative to its view direction
+     *
+     * @param amount movement amount (positive for right, negative for left)
+     * @author Dmitriy Uvarov
+     */
     public void moveRightLeft(double amount) {
         Vector3 right = direction.cross(upVector).normalize().mul(amount);
         position = position.add(right);
@@ -119,6 +159,12 @@ public class Camera {
         updateCameraVectors();
     }
 
+    /**
+     * Moves camera up or down in world space
+     *
+     * @param amount movement amount (positive for up, negative for down)
+     * @author Dmitriy Uvarov
+     */
     public void moveUpDown(double amount) {
         Vector3 up = upVector.mul(amount);
         position = position.add(up);
@@ -128,14 +174,6 @@ public class Camera {
 
     public void setPosition(final Vector3 position) {
         this.position = position;
-    }
-
-    public double getFov() {
-        return fov;
-    }
-
-    public void setFov(double fov) {
-        this.fov = fov;
     }
 
     public void setTarget(final Vector3 target) {

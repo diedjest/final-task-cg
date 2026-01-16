@@ -2,6 +2,11 @@ package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
+/**
+ * Class for Translation Transformation
+ *
+ * @author Roman Merkulov
+ */
 public class TranslationTransformation implements Transformation {
     private final double tx, ty, tz;
 

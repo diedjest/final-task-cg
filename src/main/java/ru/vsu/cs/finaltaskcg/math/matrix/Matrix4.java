@@ -3,14 +3,25 @@ package ru.vsu.cs.finaltaskcg.math.matrix;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
+/**
+ * Class for Matrix4 linear operations
+ *
+ * @author Dmitriy Uvarov
+ */
 public class Matrix4 {
     private final int SIZE = 4;
     private final double[][] m = new double[SIZE][SIZE];
 
+    /**
+     * Default zero matrix constructor
+     */
     public Matrix4() {
         zero();
     }
 
+    /**
+     * Constructor from double[][] array
+     */
     public Matrix4(double[][] values) {
         MathValidator.checkArraySize(values, SIZE, SIZE);
 
@@ -18,6 +29,9 @@ public class Matrix4 {
             System.arraycopy(values[i], 0, m[i], 0, 4);
     }
 
+    /**
+     * Copy constructor
+     */
     public Matrix4(Matrix4 other) {
         MathValidator.checkNotNull(other, "Matrix4 for copy");
 
@@ -36,18 +50,27 @@ public class Matrix4 {
         m[row][col] = value;
     }
 
+    /**
+     * Create identity matrix
+     */
     public static Matrix4 identity() {
         Matrix4 r = new Matrix4();
         r.m[0][0] = r.m[1][1] = r.m[2][2] = r.m[3][3] = 1;
         return r;
     }
 
+    /**
+     * Replace matrix with zero matrix
+     */
     public void zero() {
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
                 m[i][j] = 0;
     }
 
+    /**
+     * Add matrix
+     */
     public Matrix4 add(Matrix4 other) {
         MathValidator.checkNotNull(other, "Matrix4 for addition");
         Matrix4 r = new Matrix4();
@@ -57,6 +80,9 @@ public class Matrix4 {
         return r;
     }
 
+    /**
+     * Subtract matrix
+     */
     public Matrix4 sub(Matrix4 other) {
         MathValidator.checkNotNull(other, "Matrix4 for subtraction");
         Matrix4 r = new Matrix4();
@@ -66,6 +92,9 @@ public class Matrix4 {
         return r;
     }
 
+    /**
+     * Multiply matrix
+     */
     public Matrix4 mul(Matrix4 other) {
         MathValidator.checkNotNull(other, "Matrix4 for multiplication");
         Matrix4 r = new Matrix4();
@@ -76,6 +105,9 @@ public class Matrix4 {
         return r;
     }
 
+    /**
+     * Multiply with vector
+     */
     public Vector4 mul(Vector4 v) {
         MathValidator.checkNotNull(v, "Vector4");
         return new Vector4(
@@ -86,6 +118,9 @@ public class Matrix4 {
         );
     }
 
+    /**
+     * Transpose matrix
+     */
     public Matrix4 transpose() {
         Matrix4 r = new Matrix4();
         for (int i = 0; i < 4; i++)
@@ -94,6 +129,9 @@ public class Matrix4 {
         return r;
     }
 
+    /**
+     * Calc matrix's determinant using minors
+     */
     public double determinant() {
         double det = 0;
         for (int k = 0; k < 4; k++) {
@@ -102,10 +140,16 @@ public class Matrix4 {
         return det;
     }
 
+    /**
+     * Calc cofactor(sign) of matrix's element
+     */
     private double cofactor(int row, int col) {
         return ((row + col) % 2 == 0 ? 1 : -1) * minor(row, col);
     }
 
+    /**
+     * Calc minor's determinant
+     */
     private double minor(int row, int col) {
         double[][] sub = new double[3][3];
         int r = 0;
@@ -122,6 +166,9 @@ public class Matrix4 {
         return new Matrix3(sub).determinant();
     }
 
+    /**
+     * Calc inverse matrix
+     */
     public Matrix4 inverse() {
         double det = determinant();
         MathValidator.checkDeterminant(det);

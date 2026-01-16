@@ -12,7 +12,7 @@ public class GraphicConveyor {
     }
 
     public static Matrix4 lookAt(Vector3 eye, Vector3 target) {
-        return lookAt(eye, target, new Vector3(0F, 1.0F, 0F));
+        return lookAt(eye, target, new Vector3(0, 1.0, 0));
     }
 
     public static Matrix4 lookAt(Vector3 eye, Vector3 target, Vector3 up) {

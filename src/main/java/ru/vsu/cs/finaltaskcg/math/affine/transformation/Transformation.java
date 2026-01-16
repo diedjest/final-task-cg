@@ -6,10 +6,18 @@ import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 
 import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
 
+/**
+ * Interface for affine transformations
+ *
+ * @author Roman Merkulov
+ */
 public interface Transformation {
 
     Matrix4 getMatrix();
 
+    /**
+     * Applies transformation to 3D point
+     */
     default Vector3 apply(Vector3 point) {
         Vector4 homogeneousPoint = new Vector4(point.getX(), point.getY(), point.getZ(), 1.0);
 

@@ -2,6 +2,11 @@ package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
+/**
+ * Class for rotate transformation
+ *
+ * @author Roman Merkulov
+ */
 public class RotateTransformation implements Transformation {
     private final Matrix4 rotation;
 
@@ -9,6 +14,9 @@ public class RotateTransformation implements Transformation {
         this.rotation = createRotationMatrix(axis, angle);
     }
 
+    /**
+     * Create rotation matrix with dependency on axis of rotation
+     */
     private Matrix4 createRotationMatrix(Axis axis, double angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);

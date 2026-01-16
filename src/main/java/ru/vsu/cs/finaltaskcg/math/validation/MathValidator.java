@@ -4,10 +4,18 @@ import ru.vsu.cs.finaltaskcg.math.exceptions.MathException;
 
 import static ru.vsu.cs.finaltaskcg.math.Config.EPSILON;
 
+/**
+ * Class for validation matrices data
+ *
+ * @author Dmitriy Uvarov
+ */
 public final class MathValidator {
 
     private MathValidator() {}
 
+    /**
+     * Check the validity of indexes
+     */
     public static void checkMatrixIndex(int row, int col, int rows, int cols) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new MathException(
@@ -23,6 +31,9 @@ public final class MathValidator {
         }
     }
 
+    /**
+     * Check equality to zero (epsilon = 1e-10)
+     */
     public static void checkNotZero(double value, String name) {
         if (Math.abs(value) < EPSILON) {
             throw new MathException(name + " cannot be zero. Got: " + value);
@@ -51,6 +62,9 @@ public final class MathValidator {
         }
     }
 
+    /**
+     * Check determinant equality to zero (epsilon = 1e-10)
+     */
     public static void checkDeterminant(double det) {
         if (Math.abs(det) < EPSILON) {
             throw new MathException("Matrix is singular (determinant = " + det + ")");
