@@ -3,14 +3,26 @@ package ru.vsu.cs.finaltaskcg.math.matrix;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
+/**
+ * Class for Matrix3 linear operations
+ *
+ * @author Dmitriy Uvarov
+ */
 public class Matrix3 {
     private final int SIZE = 3;
     private final double[][] m = new double[SIZE][SIZE];
 
+    /**
+     * Default zero matrix constructor
+     */
     public Matrix3() {
         zero();
     }
 
+    /**
+     * Constructor from double[][] array
+     * @param values
+     */
     public Matrix3(double[][] values) {
         MathValidator.checkArraySize(values, SIZE, SIZE);
 
@@ -28,18 +40,27 @@ public class Matrix3 {
         m[row][col] = value;
     }
 
+    /**
+     * Create identity matrix
+     */
     public static Matrix3 identity() {
         Matrix3 r = new Matrix3();
         r.m[0][0] = r.m[1][1] = r.m[2][2] = 1;
         return r;
     }
 
+    /**
+     * Replaces matrix with zero matrix
+     */
     public void zero() {
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
                 m[i][j] = 0;
     }
 
+    /**
+     * Add matrix
+     */
     public Matrix3 add(Matrix3 other) {
         MathValidator.checkNotNull(other, "Matrix for addition");
         Matrix3 r = new Matrix3();
@@ -49,6 +70,9 @@ public class Matrix3 {
         return r;
     }
 
+    /**
+     * Subtract matrix
+     */
     public Matrix3 sub(Matrix3 other) {
         MathValidator.checkNotNull(other, "Matrix for subtraction");
         Matrix3 r = new Matrix3();
@@ -58,6 +82,9 @@ public class Matrix3 {
         return r;
     }
 
+    /**
+     * Multiply matrix
+     */
     public Matrix3 mul(Matrix3 other) {
         MathValidator.checkNotNull(other, "Matrix for multiplication");
         Matrix3 r = new Matrix3();
@@ -68,6 +95,9 @@ public class Matrix3 {
         return r;
     }
 
+    /**
+     * Multiply by vector
+     */
     public Vector3 mul(Vector3 v) {
         MathValidator.checkNotNull(v, "Vector3");
         return new Vector3(
@@ -77,6 +107,9 @@ public class Matrix3 {
         );
     }
 
+    /**
+     * Transpose matrix
+     */
     public Matrix3 transpose() {
         Matrix3 r = new Matrix3();
         for (int i = 0; i < 3; i++)
@@ -85,6 +118,9 @@ public class Matrix3 {
         return r;
     }
 
+    /**
+     * Calculate matrix's determinant
+     */
     public double determinant() {
         return
                 m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
@@ -92,6 +128,9 @@ public class Matrix3 {
                         m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
     }
 
+    /**
+     * Calc inverse matrix
+     */
     public Matrix3 inverse() {
         double det = determinant();
         MathValidator.checkDeterminant(det);

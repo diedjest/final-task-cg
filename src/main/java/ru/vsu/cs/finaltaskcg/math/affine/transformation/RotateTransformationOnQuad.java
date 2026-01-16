@@ -3,6 +3,11 @@ package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 
+/**
+ * Class for quaternions rotate transformation
+ *
+ * @author Roman Merkulov
+ */
 public class RotateTransformationOnQuad implements Transformation {
     private final Vector4 rotation;
 
@@ -10,6 +15,9 @@ public class RotateTransformationOnQuad implements Transformation {
         this.rotation = createRotationQuad(axis, angle);
     }
 
+    /**
+     * Create rotation vector with dependency on axis of rotation
+     */
     private Vector4 createRotationQuad(Axis axis, double angle) {
         double halfAngle = angle / 2;
         double sinHalf = Math.sin(halfAngle);
@@ -32,6 +40,9 @@ public class RotateTransformationOnQuad implements Transformation {
         return quaternionToMatrix(rotation);
     }
 
+    /**
+     * Converts quaternion to matrix
+     */
     private Matrix4 quaternionToMatrix(Vector4 q) {
         // нормализуем кватернион
         Vector4 qn = q.normalize();

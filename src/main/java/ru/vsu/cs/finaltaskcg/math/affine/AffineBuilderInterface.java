@@ -4,6 +4,11 @@ import ru.vsu.cs.finaltaskcg.math.affine.transformation.Axis;
 import ru.vsu.cs.finaltaskcg.math.affine.transformation.SaveTransformation;
 import ru.vsu.cs.finaltaskcg.math.affine.transformation.Transformation;
 
+/**
+ * Interface for complex affine transformation
+ *
+ * @author Roman Merkulov
+ */
 public interface AffineBuilderInterface {
     Transformation build();
     SaveTransformation saveState();

@@ -2,9 +2,17 @@ package ru.vsu.cs.finaltaskcg.math.vector;
 
 import ru.vsu.cs.finaltaskcg.math.validation.MathValidator;
 
+/**
+ * Class for Vector3 linear operations
+ *
+ * @author Dmitriy Uvarov
+ */
 public class Vector3 {
     private double x, y, z;
 
+    /**
+     * Default constructor with zero vector
+     */
     public Vector3() { this(0, 0, 0); }
 
     public Vector3(double x, double y, double z) {
@@ -35,40 +43,64 @@ public class Vector3 {
         this.z = z;
     }
 
+    /**
+     * Adds vectors
+     */
     public Vector3 add(Vector3 v) {
         MathValidator.checkNotNull(v, "Vector3 for addition");
         return new Vector3(x + v.x, y + v.y, z + v.z);
     }
 
+    /**
+     * Subtracts vectors
+     */
     public Vector3 sub(Vector3 v) {
         MathValidator.checkNotNull(v, "Vector3 for subtraction");
         return new Vector3(x - v.x, y - v.y, z - v.z);
     }
 
+    /**
+     * Multiply vector by number
+     */
     public Vector3 mul(double s) {
         return new Vector3(x * s, y * s, z * s);
     }
 
+    /**
+     * Divide vector by number
+     */
     public Vector3 div(double s) {
         MathValidator.checkNotZero(s, "Divisor");
         return new Vector3(x / s, y / s, z / s);
     }
 
+    /**
+     * Calc vector length
+     */
     public double length() {
         return Math.sqrt(x*x + y*y + z*z);
     }
 
+    /**
+     * Normalize vector
+     */
     public Vector3 normalize() {
         double len = length();
         MathValidator.checkNotZero(len, "Vector length for normalization");
         return div(len);
     }
 
+    /**
+     * Calc dot product of vectors
+     */
     public double dot(Vector3 v) {
         MathValidator.checkNotNull(v, "Vector3 for dot product");
         return x*v.x + y*v.y + z*v.z;
     }
 
+    /**
+     * Calc cross product of vectors
+     */
     public Vector3 cross(Vector3 v) {
         MathValidator.checkNotNull(v, "Vector3 for cross product");
         return new Vector3(

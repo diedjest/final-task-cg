@@ -2,6 +2,11 @@ package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
+/**
+ * Class for scale transformation
+ *
+ * @author Roman Merkulov
+ */
 public class ScaleTransformation implements Transformation {
     private final double sx, sy, sz;
 

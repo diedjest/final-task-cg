@@ -2,6 +2,11 @@ package ru.vsu.cs.finaltaskcg.math.affine.transformation;
 
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 
+/**
+ * Class for saving transform changes
+ *
+ * @author Roman Merkulov
+ */
 public class SaveTransformation implements Transformation {
     private final Matrix4 saveCondition;
 
