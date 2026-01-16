@@ -1,12 +1,9 @@
 package ru.vsu.cs.finaltaskcg;
 
-import ru.vsu.cs.finaltaskcg.ui.ApplicationController;
+import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            ApplicationController controller = new ApplicationController();
-            controller.show();
-        });
+        Application.launch(Simple3DViewer.class, args);
     }
 }

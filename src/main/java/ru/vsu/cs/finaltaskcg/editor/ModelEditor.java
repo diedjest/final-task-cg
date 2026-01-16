@@ -4,6 +4,7 @@ import ru.vsu.cs.finaltaskcg.model.Model;
 import ru.vsu.cs.finaltaskcg.model.Polygon;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ModelEditor {
