@@ -1,5 +1,6 @@
 package ru.vsu.cs.finaltaskcg.model;
 
+import ru.vsu.cs.finaltaskcg.math.affine.AffineBuilder;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
@@ -14,22 +15,14 @@ public class Model {
     public ArrayList<Vector3> normals = new ArrayList<>();
     public ArrayList<Polygon> polygons = new ArrayList<>();
 
-    private ModelTransform transform = new ModelTransform();
+    private AffineBuilder affineBuilder = new AffineBuilder();
 
     public Matrix4 getTransformationMatrix() {
-        return GraphicConveyor.rotateScaleTranslate(
-                transform.getTranslation(),
-                transform.getRotation(),
-                transform.getScale()
-        );
+        return affineBuilder.build().getMatrix();
     }
 
-    public ModelTransform getTransform() {
-        return transform;
-    }
-
-    public void setTransform(ModelTransform transform) {
-        this.transform = transform;
+    public void resetTransform() {
+        affineBuilder = new AffineBuilder();
     }
 
     public void applyTransformations() {
@@ -41,6 +34,6 @@ public class Model {
             vertices.set(i, transformed);
         }
 
-        transform.reset();
+        resetTransform();
     }
 }
