@@ -144,6 +144,17 @@ public class AffineBuilderTest {
     }
 
     @Test
+    void testTranslate() {
+        Vector3 point = new Vector3(3, 2, 1);
+        Transformation transformation = new AffineBuilder().translate(10, 0 ,0).build();
+        Vector3 result = transformation.apply(point);
+
+        assertEquals(13, result.getX(), EPSILON);
+        assertEquals(2, result.getY(), EPSILON);
+        assertEquals(1, result.getZ(), EPSILON);
+    }
+
+    @Test
     void testScaleThenTranslate() {
         Vector3 point = new Vector3(1, 1, 1);
         Transformation transformation = new AffineBuilder().scale(2, 2, 2).translate(10, 10, 10).build();

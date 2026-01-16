@@ -90,7 +90,7 @@ public class ApplicationController {
     private double lastMouseX = 0;
     private double lastMouseY = 0;
     private final double MOUSE_SENSITIVITY = 0.2;
-    private final double PAN_SENSITIVITY = 0.001;
+    private final double PAN_SENSITIVITY = 0.05;
     private final double ZOOM_SENSITIVITY = 0.05;
     private final double ROTATION_SENSITIVITY = 0.1;
 
@@ -862,7 +862,7 @@ public class ApplicationController {
         if (activeModel == null) return;
 
         if (type.equals("Перемещение")) {
-            activeModel.affineBuilder.translate(x, y, z);
+            activeModel.affineBuilder.translate(-x, y, z);
             statusLabel.setText("Модель перемещена");
         } else if (type.equals("Вращение")) {
             activeModel.affineBuilder.rotateX(Math.toRadians(x))
@@ -874,6 +874,7 @@ public class ApplicationController {
             statusLabel.setText("Модель масштабирована");
         }
 
+        activeModel.applyTransformations();
         isRendering = true;
     }
 

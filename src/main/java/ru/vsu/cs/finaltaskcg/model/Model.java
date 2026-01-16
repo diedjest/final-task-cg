@@ -4,6 +4,7 @@ import ru.vsu.cs.finaltaskcg.math.affine.AffineBuilder;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
+import ru.vsu.cs.finaltaskcg.math.vector.Vector4;
 import ru.vsu.cs.finaltaskcg.render_engine.GraphicConveyor;
 
 import java.util.*;
@@ -29,10 +30,18 @@ public class Model {
         Matrix4 transformMatrix = getTransformationMatrix();
 
         for (int i = 0; i < vertices.size(); i++) {
-            Vector3 vertex = vertices.get(i);
-            Vector3 transformed = GraphicConveyor.multiplyMatrix4ByVector3(transformMatrix, vertex);
-            vertices.set(i, transformed);
+            Vector3 v = vertices.get(i);
+
+            Vector4 v4 = new Vector4(v.getX(), v.getY(), v.getZ(), 1.0);
+            Vector4 res = transformMatrix.mul(v4);
+
+            vertices.set(i, new Vector3(
+                    res.getX() / res.getW(),
+                    res.getY() / res.getW(),
+                    res.getZ() / res.getW()
+            ));
         }
+
 
         resetTransform();
     }
