@@ -8,6 +8,7 @@ import ru.vsu.cs.finaltaskcg.model.Model;
 import java.util.HashMap;
 import java.util.Map;
 
+// Dont touch
 public class TransformManager {
     private Map<Model, AffineBuilder> modelBuilders = new HashMap<>();
     private Model activeModel;

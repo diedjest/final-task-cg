@@ -8,9 +8,12 @@ import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
 
 public class GraphicConveyor {
 
+    // dont touch
     public static Matrix4 rotateScaleTranslate() {
         return Matrix4.identity();
     }
+
+    // dont touch
     public static Matrix4 rotateScaleTranslate(
             Vector3 translation,
             Vector3 rotationAngles,
@@ -35,10 +38,12 @@ public class GraphicConveyor {
         return builder.build().getMatrix();
     }
 
+    // dont touch
     public static Matrix4 lookAt(Vector3 eye, Vector3 target) {
         return lookAt(eye, target, new Vector3(0, 1.0, 0));
     }
 
+    // dont touch
     public static Matrix4 lookAt(Vector3 eye, Vector3 target, Vector3 up) {
         Vector3 resultZ = target.sub(eye).normalize();
         Vector3 resultX = up.cross(resultZ).normalize();
@@ -53,6 +58,7 @@ public class GraphicConveyor {
         return new Matrix4(matrix);
     }
 
+    // dont touch
     public static Matrix4 perspective(
             final double fov,
             final double aspectRatio,
@@ -72,6 +78,7 @@ public class GraphicConveyor {
         return matrix;
     }
 
+    // dont touch
     public static Vector3 multiplyMatrix4ByVector3(final Matrix4 matrix, final Vector3 vertex) {
         double x = (vertex.getX() * matrix.get(0, 0)) + (vertex.getY() * matrix.get(1, 0)) + (vertex.getZ() * matrix.get(2, 0)) + matrix.get(3, 0);
         double y = (vertex.getX() * matrix.get(0, 1)) + (vertex.getY() * matrix.get(1, 1)) + (vertex.getZ() * matrix.get(2, 1)) + matrix.get(3, 1);
@@ -84,6 +91,7 @@ public class GraphicConveyor {
         return new Vector3(x, y, z);
     }
 
+    // dont touch
     public static Vector2 vertexToPoint(final Vector3 vertex, final int width, final int height) {
         return new Vector2(vertex.getX() * width + width / 2.0, -vertex.getY() * height + height / 2.0);
     }

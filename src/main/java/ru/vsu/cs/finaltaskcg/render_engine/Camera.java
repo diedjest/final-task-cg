@@ -12,6 +12,8 @@ public class Camera {
     private double nearPlane;
     private double farPlane;
     private Vector3 direction;
+
+    // dont touch
     private Vector3 upVector  = new Vector3(0, 1, 0);
 
     public Camera(
@@ -28,6 +30,7 @@ public class Camera {
         this.nearPlane = nearPlane;
         this.farPlane = farPlane;
 
+        // dont touch
         updateCameraVectors();
     }
 
@@ -36,6 +39,7 @@ public class Camera {
      *
      * @author Dmitriy Uvarov
      */
+    // dont touch
     private void updateCameraVectors() {
         direction = target.sub(position).normalize();
     }
@@ -48,6 +52,7 @@ public class Camera {
      * @param sensitivity rotation sensitivity
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void rotateAroundTarget(double deltaX, double deltaY, double sensitivity) {
         Vector3 cameraToTarget = position.sub(target);
 
@@ -93,6 +98,7 @@ public class Camera {
      * @param sensitivity pan sensitivity multiplier
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void pan(double deltaX, double deltaY, double sensitivity) {
         // правый вектор
         Vector3 right = direction.cross(upVector).normalize();
@@ -117,6 +123,7 @@ public class Camera {
      * @param sensitivity zoom sensitivity
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void zoom(double delta, double sensitivity) {
         // вектор от камеры к цели
         Vector3 toTarget = target.sub(position);
@@ -139,6 +146,7 @@ public class Camera {
      * @param amount movement amount (positive for forward, negative for backward)
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void moveForwardBackward(double amount) {
         Vector3 forward = direction.normalize().mul(amount);
         position = position.add(forward);
@@ -152,6 +160,7 @@ public class Camera {
      * @param amount movement amount (positive for right, negative for left)
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void moveRightLeft(double amount) {
         Vector3 right = direction.cross(upVector).normalize().mul(amount);
         position = position.add(right);
@@ -165,6 +174,7 @@ public class Camera {
      * @param amount movement amount (positive for up, negative for down)
      * @author Dmitriy Uvarov
      */
+    // dont touch
     public void moveUpDown(double amount) {
         Vector3 up = upVector.mul(amount);
         position = position.add(up);

@@ -16,16 +16,20 @@ public class Model {
     public ArrayList<Vector3> normals = new ArrayList<>();
     public ArrayList<Polygon> polygons = new ArrayList<>();
 
+    // dont touch
     public AffineBuilder affineBuilder = new AffineBuilder();
 
+    // dont touch
     public Matrix4 getTransformationMatrix() {
         return affineBuilder.build().getMatrix();
     }
 
+    // dont touch
     public void resetTransform() {
         affineBuilder = new AffineBuilder();
     }
 
+    // dont touch
     public void applyTransformations() {
         Matrix4 transformMatrix = getTransformationMatrix();
 
