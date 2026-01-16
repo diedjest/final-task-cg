@@ -237,6 +237,7 @@ public class GuiController {
                 lastMouseX = event.getX();
                 lastMouseY = event.getY();
                 event.consume();
+                updateLightPosition();
 
             } else if (isMiddleMousePressed) {
                 // Вращение средней кнопкой мыши
@@ -255,6 +256,7 @@ public class GuiController {
                 lastMouseX = event.getX();
                 lastMouseY = event.getY();
                 event.consume();
+                updateLightPosition();
             }
         });
 
@@ -278,6 +280,7 @@ public class GuiController {
 
             updateCameraModels();
             event.consume();
+            updateLightPosition();
         });
 
         // Убираем выделение текста при перетаскивании
@@ -393,17 +396,25 @@ public class GuiController {
 
     @FXML
     private void onLightingModeChanged(ActionEvent event) {
-        System.out.println("Режим освещения: " + (lightingMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
-        if (lightingMenuItem.isSelected()) {
-            // Источник света привязывается к позиции активной камеры
+        boolean enabled = lightingMenuItem.isSelected();
+        System.out.println("Режим освещения: " + (enabled ? "ВКЛ" : "ВЫКЛ"));
+
+        if (enabled) {
+            // Устанавливаем позицию источника света
             Camera activeCamera = cameras.get(activeCameraIndex);
             RenderEngine.setLightPosition(activeCamera.getPosition());
 
-            // Устанавливаем параметры освещения (улучшенные)
-            RenderEngine.setLightingParameters(0.3, 0.7, 0.3, 16);
+            // Устанавливаем улучшенные параметры освещения
+            RenderEngine.setLightingParameters(0.4, 0.6, 0.2, 32);
 
             System.out.println("Источник света установлен в позицию камеры");
-            System.out.println("Параметры освещения: ambient=0.3, diffuse=0.7, specular=0.3, shininess=16");
+        }
+    }
+    // Обновляем позицию света при перемещении камеры
+    private void updateLightPosition() {
+        if (lightingMenuItem.isSelected()) {
+            Camera activeCamera = cameras.get(activeCameraIndex);
+            RenderEngine.setLightPosition(activeCamera.getPosition());
         }
     }
 

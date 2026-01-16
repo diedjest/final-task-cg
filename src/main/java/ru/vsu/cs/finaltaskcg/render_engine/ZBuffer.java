@@ -1,21 +1,21 @@
 package ru.vsu.cs.finaltaskcg.render_engine;
 
 public class ZBuffer {
-    private double[][] buffer;
+    private float[][] buffer;
     private int width;
     private int height;
 
     public ZBuffer(int width, int height) {
         this.width = width;
         this.height = height;
-        this.buffer = new double[height][width];
+        this.buffer = new float[height][width];
         clear();
     }
 
     public void clear() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                buffer[y][x] = 1.0; // Инициализируем дальнюю плоскость (z = 1.0)
+                buffer[y][x] = Float.MAX_VALUE; // Инициализируем дальнюю плоскость (z = 1.0)
             }
         }
     }
@@ -25,9 +25,13 @@ public class ZBuffer {
             return false;
         }
 
-        // Z-буфер: чем МЕНЬШЕ z, тем БЛИЖЕ объект
-        if (z >= -1.0 && z <= 1.0 && z < buffer[y][x]) {
-            buffer[y][x] = z;
+        // Преобразуем в float для сравнения
+        float zValue = (float)z;
+
+        // В NDC: -1 (близко), 1 (далеко)
+        // Сохраняем пиксели с меньшим Z (которые ближе к камере)
+        if (zValue < buffer[y][x]) {
+            buffer[y][x] = zValue;
             return true;
         }
         return false;
