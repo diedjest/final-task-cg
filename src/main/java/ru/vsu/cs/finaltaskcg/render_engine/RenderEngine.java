@@ -282,8 +282,18 @@ public class RenderEngine {
             final int width,
             final int height) {
 
-        // Проверяем, находится ли треугольник в поле зрения
+        // 1. Проверяем, находится ли треугольник в поле зрения камеры
+        if (!isTriangleInFrustum(vertices)) {
+            return;
+        }
+
+        // 2. Проверяем экранную видимость (уже есть, но можно оставить)
         if (!isTriangleVisible(screenPoints, width, height)) {
+            return;
+        }
+
+        // 3. Проверяем back-face culling (отсечение нелицевых граней)
+        if (shouldCullBackFace(vertices)) {
             return;
         }
 
@@ -302,6 +312,22 @@ public class RenderEngine {
         if (drawWireframe) {
             drawWireframe(graphicsContext, screenPoints);
         }
+    }
+
+    private static boolean shouldCullBackFace(Vector3[] vertices) {
+        // Вычисляем нормаль треугольника в экранных координатах
+        // Если нормаль направлена от камеры (z > 0), отсекаем
+        Vector3 v0 = vertices[0];
+        Vector3 v1 = vertices[1];
+        Vector3 v2 = vertices[2];
+
+        Vector3 edge1 = v1.sub(v0);
+        Vector3 edge2 = v2.sub(v0);
+        Vector3 normal = edge1.cross(edge2);
+
+        // В NDC камера смотрит по -z, так что если нормаль.z > 0,
+        // треугольник направлен от камеры
+        return normal.getZ() > 0;
     }
 
     private static void renderTriangulatedPolygon(
@@ -512,6 +538,19 @@ public class RenderEngine {
                                             Vector2[] screenPoints,
                                             Color color) {
 
+        // Предварительная проверка: все ли вершины находятся перед камерой?
+        // В NDC видимые точки имеют z в [-1, 1], но обычно видимые z < 1
+        boolean allBehindCamera = true;
+        for (Vector3 vertex : vertices) {
+            if (vertex.getZ() < 1.0) { // z < 1 означает перед дальней плоскостью
+                allBehindCamera = false;
+                break;
+            }
+        }
+        if (allBehindCamera) {
+            return;
+        }
+
         // Находим ограничивающий прямоугольник
         double minX = Math.max(0, Math.min(screenPoints[0].getX(),
                 Math.min(screenPoints[1].getX(), screenPoints[2].getX())));
@@ -528,12 +567,12 @@ public class RenderEngine {
 
         // Вычисляем площадь треугольника
         double area = edgeFunction(screenPoints[0], screenPoints[1], screenPoints[2]);
-
-        if (area == 0) {
+        if (Math.abs(area) < 1e-10) {
             return;
         }
 
         PixelWriter pixelWriter = gc.getPixelWriter();
+        double invArea = 1.0 / area;
 
         // Проходим по всем пикселям в ограничивающем прямоугольнике
         for (int y = (int)minY; y <= maxY; y++) {
@@ -543,20 +582,27 @@ public class RenderEngine {
                 double w1 = edgeFunction(screenPoints[2], screenPoints[0], x, y);
                 double w2 = edgeFunction(screenPoints[0], screenPoints[1], x, y);
 
-                // Если точка внутри треугольника
+                // Если точка внутри треугольника (с учетом ориентации)
                 if (w0 >= 0 && w1 >= 0 && w2 >= 0) {
                     // Нормализуем барицентрические координаты
-                    w0 /= area;
-                    w1 /= area;
-                    w2 /= area;
+                    w0 *= invArea;
+                    w1 *= invArea;
+                    w2 *= invArea;
 
                     // Интерполируем Z-координату
                     double z = w0 * vertices[0].getZ() + w1 * vertices[1].getZ() + w2 * vertices[2].getZ();
 
-                    // Проверяем Z-буфер
-                    if (zBuffer.testAndSet(x, y, z)) {
-                        pixelWriter.setColor(x, y, color);
-                        pixelsRendered++;
+                    // В Z-буфере храним значения в диапазоне [0, 1] или [-1, 1]
+                    // Нормализуем z к диапазону [0, 1] для сравнения
+                    double zNormalized = (z + 1.0) * 0.5; // из [-1, 1] в [0, 1]
+
+                    // Проверяем, находится ли точка перед камерой
+                    if (zNormalized >= 0 && zNormalized <= 1) {
+                        // Проверяем Z-буфер
+                        if (zBuffer.testAndSet(x, y, zNormalized)) {
+                            pixelWriter.setColor(x, y, color);
+                            pixelsRendered++;
+                        }
                     }
                 }
             }
@@ -631,5 +677,23 @@ public class RenderEngine {
                 );
             }
         }
+    }
+
+    private static boolean isPointInFrustum(Vector3 point) {
+        // NDC: x,y,z в диапазоне [-1, 1] для видимых точек
+        return point.getX() >= -1 && point.getX() <= 1 &&
+                point.getY() >= -1 && point.getY() <= 1 &&
+                point.getZ() >= -1 && point.getZ() <= 1;
+    }
+
+    private static boolean isTriangleInFrustum(Vector3[] vertices) {
+        // Если все три вершины вне frustum, треугольник невидим
+        // Но если хоть одна внутри - рисуем (можно улучшить до точного отсечения)
+        for (Vector3 vertex : vertices) {
+            if (isPointInFrustum(vertex)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

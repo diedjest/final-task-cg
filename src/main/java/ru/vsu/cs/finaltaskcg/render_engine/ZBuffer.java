@@ -15,7 +15,7 @@ public class ZBuffer {
     public void clear() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                buffer[y][x] = Double.POSITIVE_INFINITY;
+                buffer[y][x] = 1.0; // Инициализируем дальнюю плоскость (z = 1.0)
             }
         }
     }
@@ -25,7 +25,8 @@ public class ZBuffer {
             return false;
         }
 
-        if (z < buffer[y][x]) {
+        // Z-буфер: чем МЕНЬШЕ z, тем БЛИЖЕ объект
+        if (z < buffer[y][x] && z >= 0) {
             buffer[y][x] = z;
             return true;
         }
