@@ -85,7 +85,7 @@ public class GuiController {
 
     private Timeline timeline;
 
-    private TransformManager transformManager;
+    private TransformManager transformManager = new TransformManager();
 
     private boolean isMousePressed = false;
     private boolean isMiddleMousePressed = false;
