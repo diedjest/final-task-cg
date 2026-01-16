@@ -6,12 +6,11 @@ public class SaveTransformation implements Transformation {
     private final Matrix4 saveCondition;
 
     public SaveTransformation(Matrix4 matrix) {
-        this.saveCondition = new Matrix4(matrix); // Используем конструктор копирования
+        this.saveCondition = new Matrix4(matrix);
     }
 
     @Override
     public Matrix4 getMatrix() {
-        // Возвращаем копию, чтобы нельзя было изменить сохраненное состояние
         return new Matrix4(saveCondition);
     }
 }
