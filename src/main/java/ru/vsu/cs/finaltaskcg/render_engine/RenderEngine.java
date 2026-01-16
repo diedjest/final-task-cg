@@ -3,6 +3,7 @@ package ru.vsu.cs.finaltaskcg.render_engine;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+import ru.vsu.cs.finaltaskcg.managers.TransformManager;
 import ru.vsu.cs.finaltaskcg.math.matrix.Matrix4;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector2;
 import ru.vsu.cs.finaltaskcg.math.vector.Vector3;
@@ -145,7 +146,7 @@ public class RenderEngine {
             final GraphicsContext graphicsContext,
             final Camera camera,
             final Model mesh,
-            final int width,
+            TransformManager tempTransformManager, final int width,
             final int height) {
 
         // Сбрасываем статистику
