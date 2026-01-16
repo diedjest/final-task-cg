@@ -22,7 +22,9 @@ import ru.vsu.cs.finaltaskcg.normals.NormalCalculator;
 import ru.vsu.cs.finaltaskcg.objreader.ObjReader;
 import ru.vsu.cs.finaltaskcg.render_engine.Camera;
 import ru.vsu.cs.finaltaskcg.render_engine.RenderEngine;
+import ru.vsu.cs.finaltaskcg.triangulation.FanTriangulator;
 import ru.vsu.cs.finaltaskcg.triangulation.Triangulator;
+import ru.vsu.cs.finaltaskcg.lighting.LightCalculator;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +58,16 @@ public class GuiController {
     private CheckMenuItem zBufferMenuItem;
 
     @FXML
-    private ColorPicker colorPicker; // Этот элемент может быть null, если не найден в FXML
+    private CheckMenuItem triangulationMenuItem;
+
+    @FXML
+    private CheckMenuItem smoothShadingMenuItem;
+
+    @FXML
+    private CheckMenuItem specularMenuItem;
+
+    @FXML
+    private ColorPicker colorPicker;
 
     @FXML
     private Label cameraLabel;
@@ -70,7 +81,7 @@ public class GuiController {
     private Camera camera = new Camera(
             new Vector3(0, 0, 100),
             new Vector3(0, 0, 0),
-            1.0F, 1, 0.01F, 100);
+            1.0F, 1, 0.1F, 100);
 
     private Timeline timeline;
 
@@ -92,28 +103,25 @@ public class GuiController {
             canvas.setHeight(newValue.doubleValue());
         });
 
-        // Инициализация UI элементов (проверяем на null)
-        if (colorPicker != null) {
-            colorPicker.setValue(Color.LIGHTGRAY);
-        } else {
-            System.err.println("Warning: colorPicker is null in FXML");
-        }
+        // Инициализация UI элементов
+        colorPicker.setValue(Color.LIGHTGRAY);
 
-        if (wireframeMenuItem != null) {
-            wireframeMenuItem.setSelected(true);
-        }
-        if (fillMenuItem != null) {
-            fillMenuItem.setSelected(false);
-        }
-        if (textureMenuItem != null) {
-            textureMenuItem.setSelected(false);
-        }
-        if (lightingMenuItem != null) {
-            lightingMenuItem.setSelected(false);
-        }
-        if (zBufferMenuItem != null) {
-            zBufferMenuItem.setSelected(false);
-        }
+        // Устанавливаем начальные значения для меню
+        wireframeMenuItem.setSelected(true);
+        fillMenuItem.setSelected(false);
+        textureMenuItem.setSelected(false);
+        lightingMenuItem.setSelected(false);
+        zBufferMenuItem.setSelected(false);
+        triangulationMenuItem.setSelected(true); // Включаем автотриангуляцию по умолчанию
+        smoothShadingMenuItem.setSelected(false); // Плоское затенение по умолчанию
+        specularMenuItem.setSelected(false); // Зеркальное освещение выключено по умолчанию
+
+        // Устанавливаем начальные параметры в RenderEngine
+        RenderEngine.setAutoTriangulate(true);
+        RenderEngine.setSmoothShading(false);
+        RenderEngine.setSpecularLighting(false);
+        RenderEngine.setLightingParameters(0.3, 0.7, 0.3, 16);
+        RenderEngine.setShowSceneHelpers(true);
 
         // Инициализируем камеры
         cameras.add(camera);
@@ -137,24 +145,21 @@ public class GuiController {
             activeCamera.setAspectRatio((float) (width / height));
 
             if (mesh != null) {
-                // Устанавливаем цвет заливки (если colorPicker доступен)
-                Color fillColor = Color.LIGHTGRAY;
-                if (colorPicker != null) {
-                    fillColor = colorPicker.getValue();
-                }
+                // Устанавливаем цвет заливки
+                Color fillColor = colorPicker.getValue();
                 RenderEngine.setFillColor(fillColor);
 
-                // Устанавливаем режимы рендеринга (проверяем на null)
-                boolean wireframe = wireframeMenuItem != null && wireframeMenuItem.isSelected();
-                boolean fill = fillMenuItem != null && fillMenuItem.isSelected();
-                boolean texture = textureMenuItem != null && textureMenuItem.isSelected();
-                boolean lighting = lightingMenuItem != null && lightingMenuItem.isSelected();
-                boolean zBuffer = zBufferMenuItem != null && zBufferMenuItem.isSelected();
+                // Устанавливаем режимы рендеринга
+                boolean wireframe = wireframeMenuItem.isSelected();
+                boolean fill = fillMenuItem.isSelected();
+                boolean texture = textureMenuItem.isSelected();
+                boolean lighting = lightingMenuItem.isSelected();
+                boolean zBuffer = zBufferMenuItem.isSelected();
 
                 RenderEngine.setRenderMode(wireframe, fill, texture, lighting, zBuffer);
 
                 // Устанавливаем позицию источника света (привязано к активной камере)
-                if (lighting && lightingMenuItem != null && lightingMenuItem.isSelected()) {
+                if (lighting && lightingMenuItem.isSelected()) {
                     RenderEngine.setLightPosition(activeCamera.getPosition());
                 }
 
@@ -186,6 +191,9 @@ public class GuiController {
             } else {
                 // Если модель не загружена, показываем инструкцию
                 canvas.getGraphicsContext2D().fillText("Загрузите модель через File -> Open Model", 20, 20);
+                canvas.getGraphicsContext2D().fillText("Используйте левую кнопку мыши для панорамирования", 20, 40);
+                canvas.getGraphicsContext2D().fillText("Среднюю кнопку для вращения", 20, 60);
+                canvas.getGraphicsContext2D().fillText("Колесико для зума", 20, 80);
             }
         });
 
@@ -222,6 +230,11 @@ public class GuiController {
                 Camera cam = cameras.get(activeCameraIndex);
                 cam.pan((float)deltaX, (float)deltaY, PAN_SENSITIVITY);
 
+                // Обновляем позицию света, если освещение включено
+                if (lightingMenuItem.isSelected()) {
+                    RenderEngine.setLightPosition(cam.getPosition());
+                }
+
                 updateCameraModels();
                 lastMouseX = event.getX();
                 lastMouseY = event.getY();
@@ -234,6 +247,11 @@ public class GuiController {
 
                 Camera cam = cameras.get(activeCameraIndex);
                 cam.rotateAroundTarget((float)deltaX, (float)deltaY, ROTATION_SENSITIVITY);
+
+                // Обновляем позицию света, если освещение включено
+                if (lightingMenuItem.isSelected()) {
+                    RenderEngine.setLightPosition(cam.getPosition());
+                }
 
                 updateCameraModels();
                 lastMouseX = event.getX();
@@ -254,6 +272,11 @@ public class GuiController {
 
             // Zoom колесиком мыши
             cam.zoom((float)event.getDeltaY(), ZOOM_SENSITIVITY);
+
+            // Обновляем позицию света, если освещение включено
+            if (lightingMenuItem.isSelected()) {
+                RenderEngine.setLightPosition(cam.getPosition());
+            }
 
             updateCameraModels();
             event.consume();
@@ -280,22 +303,49 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
 
-            // Триангуляция модели
-            Triangulator.triangulate(mesh);
+            // Выводим информацию о загруженной модели
+            System.out.println("=== Информация о модели ===");
+            System.out.println("Название файла: " + file.getName());
+            System.out.println("Вершин: " + mesh.vertices.size());
+            System.out.println("Текстурных координат: " + mesh.textureVertices.size());
+            System.out.println("Нормалей: " + mesh.normals.size());
+            System.out.println("Полигонов: " + mesh.polygons.size());
+
+            // Проверяем, есть ли полигоны с более чем 3 вершинами
+            int nonTrianglePolygons = 0;
+            for (ru.vsu.cs.finaltaskcg.model.Polygon polygon : mesh.polygons) {
+                if (polygon.getVertexIndices().size() > 3) {
+                    nonTrianglePolygons++;
+                }
+            }
+            System.out.println("Полигонов с >3 вершинами: " + nonTrianglePolygons);
+
+            // Триангуляция модели (используем веерную триангуляцию)
+            Triangulator triangulator = new FanTriangulator();
+            if (triangulator.needsTriangulation(mesh)) {
+                System.out.println("Триангулируем модель...");
+                long startTime = System.currentTimeMillis();
+                triangulator.triangulate(mesh);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Модель триангулирована за " + (endTime - startTime) + " мс");
+                System.out.println("Треугольников после триангуляции: " + mesh.polygons.size());
+            } else {
+                System.out.println("Модель уже состоит из треугольников, триангуляция не требуется");
+            }
 
             // Вычисление нормалей (перезаписываем даже если есть в файле)
+            System.out.println("Вычисляем нормали...");
             NormalCalculator.calculateVertexNormals(mesh);
+            System.out.println("Нормалей вычислено: " + mesh.normals.size());
 
-            System.out.println("Model loaded successfully: " + file.getName());
-            System.out.println("Vertices: " + mesh.vertices.size());
-            System.out.println("Polygons (triangles): " + mesh.polygons.size());
-            System.out.println("Normals: " + mesh.normals.size());
+            System.out.println("=== Загрузка завершена ===\n");
 
         } catch (IOException exception) {
-            System.err.println("Error reading file: " + exception.getMessage());
+            System.err.println("Ошибка чтения файла: " + exception.getMessage());
             showAlert("Ошибка загрузки", "Не удалось загрузить файл: " + exception.getMessage());
         } catch (Exception e) {
-            System.err.println("Error processing model: " + e.getMessage());
+            System.err.println("Ошибка обработки модели: " + e.getMessage());
+            e.printStackTrace();
             showAlert("Ошибка обработки", "Ошибка при обработке модели: " + e.getMessage());
         }
     }
@@ -309,10 +359,8 @@ public class GuiController {
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file != null) {
             if (RenderEngine.loadTexture(file.getAbsolutePath())) {
-                if (textureMenuItem != null) {
-                    textureMenuItem.setSelected(true);
-                }
-                System.out.println("Texture loaded: " + file.getName());
+                textureMenuItem.setSelected(true);
+                System.out.println("Текстура загружена: " + file.getName());
             } else {
                 showAlert("Ошибка загрузки", "Не удалось загрузить текстуру");
             }
@@ -321,42 +369,94 @@ public class GuiController {
 
     @FXML
     private void onWireframeModeChanged(ActionEvent event) {
-        System.out.println("Wireframe mode: " + (wireframeMenuItem != null && wireframeMenuItem.isSelected()));
+        System.out.println("Режим полигональной сетки: " + (wireframeMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
     }
 
     @FXML
     private void onFillModeChanged(ActionEvent event) {
-        System.out.println("Fill mode: " + (fillMenuItem != null && fillMenuItem.isSelected()));
+        System.out.println("Режим заливки треугольников: " + (fillMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
+
+        // Если включаем заливку, рекомендуется использовать Z-буфер
+        if (fillMenuItem.isSelected() && !zBufferMenuItem.isSelected()) {
+            System.out.println("Рекомендуется включить Z-буфер для корректной заливки");
+        }
     }
 
     @FXML
     private void onTextureModeChanged(ActionEvent event) {
-        System.out.println("Texture mode: " + (textureMenuItem != null && textureMenuItem.isSelected()));
-        if (textureMenuItem != null && textureMenuItem.isSelected() && !RenderEngine.isTextureLoaded()) {
-            showAlert("Текстура не загружена", "Пожалуйста, загрузите текстуру через File -> Load Texture");
+        System.out.println("Режим текстуры: " + (textureMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
+        if (textureMenuItem.isSelected() && !RenderEngine.isTextureLoaded()) {
+            showAlert("Текстура не загружена",
+                    "Пожалуйста, загрузите текстуру через File -> Load Texture\n" +
+                            "Или выберите модель с текстурными координатами");
             textureMenuItem.setSelected(false);
         }
     }
 
     @FXML
     private void onLightingModeChanged(ActionEvent event) {
-        System.out.println("Lighting mode: " + (lightingMenuItem != null && lightingMenuItem.isSelected()));
-        if (lightingMenuItem != null && lightingMenuItem.isSelected()) {
+        System.out.println("Режим освещения: " + (lightingMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
+        if (lightingMenuItem.isSelected()) {
             // Источник света привязывается к позиции активной камеры
-            RenderEngine.setLightPosition(cameras.get(activeCameraIndex).getPosition());
+            Camera activeCamera = cameras.get(activeCameraIndex);
+            RenderEngine.setLightPosition(activeCamera.getPosition());
+
+            // Устанавливаем параметры освещения (улучшенные)
+            RenderEngine.setLightingParameters(0.3, 0.7, 0.3, 16);
+
+            System.out.println("Источник света установлен в позицию камеры");
+            System.out.println("Параметры освещения: ambient=0.3, diffuse=0.7, specular=0.3, shininess=16");
         }
     }
 
     @FXML
     private void onZBufferModeChanged(ActionEvent event) {
-        System.out.println("Z-Buffer mode: " + (zBufferMenuItem != null && zBufferMenuItem.isSelected()));
+        System.out.println("Режим Z-буфера: " + (zBufferMenuItem.isSelected() ? "ВКЛ" : "ВЫКЛ"));
+    }
+
+    @FXML
+    private void onTriangulationModeChanged(ActionEvent event) {
+        boolean enabled = triangulationMenuItem.isSelected();
+        RenderEngine.setAutoTriangulate(enabled);
+        System.out.println("Автотриангуляция: " + (enabled ? "ВКЛ" : "ВЫКЛ"));
+
+        // Если отключаем автотриангуляцию, предупреждаем пользователя
+        if (!enabled && mesh != null) {
+            // Проверяем, есть ли в модели полигоны с более чем 3 вершинами
+            Triangulator triangulator = new FanTriangulator();
+            if (triangulator.needsTriangulation(mesh)) {
+                showAlert("Предупреждение",
+                        "Модель содержит полигоны с более чем 3 вершинами.\n" +
+                                "Без триангуляции они будут отображены некорректно.\n" +
+                                "Рекомендуется включить автотриангуляцию.");
+            }
+        }
+    }
+
+    @FXML
+    private void onSmoothShadingModeChanged(ActionEvent event) {
+        boolean enabled = smoothShadingMenuItem.isSelected();
+        RenderEngine.setSmoothShading(enabled);
+        System.out.println("Плавное затенение: " + (enabled ? "ВКЛ" : "ВЫКЛ"));
+
+        // Если включаем плавное затенение, убедимся что есть нормали
+        if (enabled && mesh != null && (mesh.normals.isEmpty() || mesh.normals.size() != mesh.vertices.size())) {
+            System.out.println("Для плавного затенения требуются нормали вершин");
+            System.out.println("Пересчитываем нормали...");
+            NormalCalculator.calculateVertexNormals(mesh);
+        }
+    }
+
+    @FXML
+    private void onSpecularModeChanged(ActionEvent event) {
+        boolean enabled = specularMenuItem.isSelected();
+        RenderEngine.setSpecularLighting(enabled);
+        System.out.println("Зеркальное освещение: " + (enabled ? "ВКЛ" : "ВЫКЛ"));
     }
 
     @FXML
     private void onColorChanged(ActionEvent event) {
-        if (colorPicker != null) {
-            System.out.println("Color changed to: " + colorPicker.getValue());
-        }
+        System.out.println("Цвет заливки изменен на: " + colorPicker.getValue());
     }
 
     @FXML
@@ -372,7 +472,7 @@ public class GuiController {
         Camera newCamera = new Camera(
                 position,
                 new Vector3(0, 0, 0),
-                1.0F, 1, 0.01F, 100
+                1.0F, 1, 0.1F, 100
         );
 
         cameras.add(newCamera);
@@ -382,7 +482,7 @@ public class GuiController {
         updateCameraModels();
         updateCameraLabel();
 
-        System.out.println("Camera added. Total cameras: " + cameras.size());
+        System.out.println("Камера добавлена. Всего камер: " + cameras.size());
     }
 
     @FXML
@@ -400,7 +500,7 @@ public class GuiController {
             }
 
             updateCameraLabel();
-            System.out.println("Camera removed. Total cameras: " + cameras.size());
+            System.out.println("Камера удалена. Всего камер: " + cameras.size());
         } else {
             showAlert("Невозможно удалить", "Должна остаться хотя бы одна камера");
         }
@@ -412,17 +512,17 @@ public class GuiController {
         updateCameraLabel();
 
         // Обновляем позицию источника света при включенном освещении
-        if (lightingMenuItem != null && lightingMenuItem.isSelected()) {
-            RenderEngine.setLightPosition(cameras.get(activeCameraIndex).getPosition());
+        if (lightingMenuItem.isSelected()) {
+            Camera activeCamera = cameras.get(activeCameraIndex);
+            RenderEngine.setLightPosition(activeCamera.getPosition());
+            System.out.println("Источник света перемещен к камере " + (activeCameraIndex + 1));
         }
 
-        System.out.println("Switched to camera " + (activeCameraIndex + 1));
+        System.out.println("Переключено на камеру " + (activeCameraIndex + 1));
     }
 
     private void updateCameraLabel() {
-        if (cameraLabel != null) {
-            cameraLabel.setText("Camera " + (activeCameraIndex + 1) + " of " + cameras.size());
-        }
+        cameraLabel.setText("Камера " + (activeCameraIndex + 1) + " из " + cameras.size());
     }
 
     private void updateCameraModels() {
@@ -448,42 +548,84 @@ public class GuiController {
     public void handleCameraForward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveForwardBackward(TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вперед");
     }
 
     @FXML
     public void handleCameraBackward(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveForwardBackward(-TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: назад");
     }
 
     @FXML
     public void handleCameraLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveRightLeft(TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: влево");
     }
 
     @FXML
     public void handleCameraRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveRightLeft(-TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вправо");
     }
 
     @FXML
     public void handleCameraUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveUpDown(-TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вверх");
     }
 
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.moveUpDown(TRANSLATION);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вниз");
     }
 
     // Дополнительные методы для управления камерой (вращение)
@@ -491,28 +633,56 @@ public class GuiController {
     public void handleCameraRotateLeft(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(-5, 0, ROTATION_SENSITIVITY);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вращение влево");
     }
 
     @FXML
     public void handleCameraRotateRight(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(5, 0, ROTATION_SENSITIVITY);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вращение вправо");
     }
 
     @FXML
     public void handleCameraRotateUp(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(0, -5, ROTATION_SENSITIVITY);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вращение вверх");
     }
 
     @FXML
     public void handleCameraRotateDown(ActionEvent actionEvent) {
         Camera cam = cameras.get(activeCameraIndex);
         cam.rotateAroundTarget(0, 5, ROTATION_SENSITIVITY);
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера: вращение вниз");
     }
 
     // Метод для сброса камеры
@@ -521,7 +691,14 @@ public class GuiController {
         Camera cam = cameras.get(activeCameraIndex);
         cam.setPosition(new Vector3(0, 0, 100));
         cam.setTarget(new Vector3(0, 0, 0));
+
+        // Обновляем позицию света, если освещение включено
+        if (lightingMenuItem.isSelected()) {
+            RenderEngine.setLightPosition(cam.getPosition());
+        }
+
         updateCameraModels();
+        System.out.println("Камера сброшена в начальное положение");
     }
 
     @FXML
@@ -531,6 +708,35 @@ public class GuiController {
 
     @FXML
     public void handleAbout(ActionEvent event) {
-        showAlert("О программе", "Simple3DViewer\nВерсия 2.0\n3D просмотрщик моделей");
+        showAlert("О программе",
+                "3D Model Viewer Pro\n" +
+                        "Версия 2.0\n" +
+                        "\n" +
+                        "Функции:\n" +
+                        "- Загрузка моделей OBJ\n" +
+                        "- Триангуляция полигонов\n" +
+                        "- Вычисление нормалей\n" +
+                        "- Растеризация треугольников\n" +
+                        "- Z-буфер\n" +
+                        "- Текстурирование\n" +
+                        "- Освещение (плоское и плавное)\n" +
+                        "- Зеркальные блики\n" +
+                        "- Несколько камер\n" +
+                        "\n" +
+                        "Управление:\n" +
+                        "- Левая кнопка мыши: панорамирование\n" +
+                        "- Средняя кнопка: вращение\n" +
+                        "- Колесико: зум\n" +
+                        "- W/A/S/D/Q/E: перемещение камеры\n" +
+                        "\n" +
+                        "Режимы отрисовки:\n" +
+                        "- Wireframe: полигональная сетка\n" +
+                        "- Fill: заливка треугольников\n" +
+                        "- Texture: наложение текстуры\n" +
+                        "- Lighting: включение освещения\n" +
+                        "- Z-Buffer: устранение перекрытий\n" +
+                        "- Auto Triangulation: автоматическая триангуляция\n" +
+                        "- Smooth Shading: плавное затенение\n" +
+                        "- Specular Lighting: зеркальное освещение");
     }
 }
